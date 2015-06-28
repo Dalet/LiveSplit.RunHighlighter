@@ -1,0 +1,15 @@
+<updates>
+     <update version="0.2.0">
+        <files>
+            <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>
+				Added highlighting from LiveSplit itself.
+            </change>
+			<change>
+				Can only type Twitch allowed characters in the username textbox now.
+			</change>
+        </changelog>
+    </update>
+</updates>
