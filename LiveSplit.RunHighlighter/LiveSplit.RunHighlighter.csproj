@@ -24,9 +24,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\</OutputPath>
+    <OutputPath>..\Components\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="LiveSplit.Core">
       <HintPath>..\..\..\..\..\Program Files (x86)\LiveSplit\LiveSplit.Core.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -47,6 +48,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="UpdateManager">
       <HintPath>..\..\..\..\..\Program Files (x86)\LiveSplit\Components\UpdateManager.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
