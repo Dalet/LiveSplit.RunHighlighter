@@ -26,7 +26,7 @@ namespace LiveSplit.RunHighlighter
 
         private void webBrowser_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            if (webBrowser.Url.Host != "twitch.tv" && webBrowser.Url.Host != "www.twitch.tv" && webBrowser.Url.AbsoluteUri != this.HighlightInfo.ManagerURI.AbsoluteUri)
+            if ((webBrowser.Url.Host != "twitch.tv" && webBrowser.Url.Host != "www.twitch.tv") || webBrowser.Url.LocalPath != this.HighlightInfo.ManagerURI.LocalPath)
                 return;
 
             if (!_isJavaScriptInjected && webBrowser.ReadyState == WebBrowserReadyState.Complete)
