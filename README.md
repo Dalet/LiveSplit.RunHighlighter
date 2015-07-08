@@ -32,3 +32,4 @@ Requirements
 Credits
 -------
 * [Dalet](https://twitter.com/Dalleth_) [(aka Dalleth)](http://twitch.tv/dalleth_)
+* Icons provided by [FatCow.com](http://www.fatcow.com/free-icons)

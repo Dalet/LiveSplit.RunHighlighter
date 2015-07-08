@@ -5,11 +5,12 @@ using System.Threading.Tasks;
 namespace LiveSplit.RunHighlighter
 {
     public static class NIST
-    {
+    {      
         static DateTime _lastTimeRequest = new DateTime(0, DateTimeKind.Utc);
         static DateTime? _lastResponse;
 
-        public static DateTime UtcNow(bool requestServer = true)
+
+        public static bool UtcNow(out DateTime ret, bool requestServer = true)
         {
             TimeSpan timeSinceLastRequest = DateTime.UtcNow - _lastTimeRequest;
             DateTime localUTC = DateTime.UtcNow;
@@ -25,52 +26,55 @@ namespace LiveSplit.RunHighlighter
                 {
                     Debug.WriteLine("NIST Response: " + response);
                     _lastResponse = response;
-                    return response.Value;
+                    ret = response.Value;
+                    return true;
                 }
                 else
                 {
                     Debug.WriteLine("Failed to retrieve time from server.");
                     _lastTimeRequest = previousLastTimeRequest;
-                    return UtcNowBackup(localUTC);
+                    return UtcNowBackup(localUTC, out ret);
                 }
             }
             else
             {
                 Debug.WriteLineIf(requestServer, "NIST server request cooldown: " + (TimeSpan.FromMinutes(10) - timeSinceLastRequest));
-                return UtcNowBackup(localUTC);
+                return UtcNowBackup(localUTC, out ret);
             }
         }
 
-        public static Task UtcNowAsync(Action<DateTime> callback)
+        public static Task UtcNowAsync(Action<DateTime, bool> callback)
         {
             return Task.Factory.StartNew(() =>
             {
-                callback(UtcNow());
+                DateTime time;
+                bool serverSuccess = UtcNow(out time);
+                callback(time, serverSuccess);
             });
         }
 
-        private static DateTime UtcNowBackup(DateTime localTime)
+        private static bool UtcNowBackup(DateTime localTime, out DateTime ret)
         {
-            DateTime UtcNow;
-
             if (_lastResponse != null) //just add the time elapsed since the last request instead
             {
                 TimeSpan timeSinceLastRequest = localTime - _lastTimeRequest;
-                UtcNow = _lastResponse.Value + timeSinceLastRequest;
+
+                ret = _lastResponse.Value + timeSinceLastRequest;
 
                 Debug.WriteLine("Used last response as backup.");
-                Debug.WriteLine("NIST: " + UtcNow + " Local UTC: " + DateTime.UtcNow);
+                Debug.WriteLine("NIST: " + ret + " Local UTC: " + DateTime.UtcNow);
+
+                return true;
             }
             else //if getting the time from the server failed use local
             {
+                ret = localTime;
+
                 Debug.WriteLine("Used local time as backup.");
+                Debug.WriteLine("Local UTC: " + ret);
 
-                UtcNow = localTime;
-
-                Debug.WriteLine("Local UTC: " + UtcNow);
+                return false;
             }
-
-            return UtcNow;
         }
 
         private static DateTime? GetNISTDate()

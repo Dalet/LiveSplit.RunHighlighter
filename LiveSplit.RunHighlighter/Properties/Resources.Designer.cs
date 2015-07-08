@@ -61,7 +61,23 @@ namespace LiveSplit.RunHighlighter.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to .
+        ///   Looks up a localized string similar to var count = 0;
+        ///
+        ///function markerLoop() {
+        ///    setTimeout(function () {
+        ///        $(&apos;input.start-time.string&apos;).trigger(&apos;change&apos;);
+        ///        if ($(&apos;div.left-marker&apos;).attr(&apos;title&apos;) !== &quot;{start_time_str}&quot;
+        ///            || $(&apos;div.right-marker&apos;).attr(&apos;title&apos;) !== &quot;{end_time_str}&quot;) {
+        ///            if (!{out_of_vid}) { //no loop if the video is incomplete
+        ///                markerLoop();
+        ///            }
+        ///        }
+        ///    }, 100);
+        ///}
+        ///
+        ///function playerLoop() {
+        ///    var player = $(&apos;div#player object&apos;)[0];
+        ///    setTimeout(fun [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string highlightInjection {
             get {
@@ -90,6 +106,16 @@ namespace LiveSplit.RunHighlighter.Properties {
         internal static string waitForKeyElements {
             get {
                 return ResourceManager.GetString("waitForKeyElements", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap warning {
+            get {
+                object obj = ResourceManager.GetObject("warning", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
     }

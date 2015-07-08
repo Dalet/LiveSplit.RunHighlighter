@@ -26,6 +26,9 @@ namespace LiveSplit.RunHighlighter
             this.MaximumSize = new System.Drawing.Size(this.Width, Screen.AllScreens.Max(s => s.Bounds.Height));
             this.MinimumSize = new System.Drawing.Size(this.Width, this.Height);
             this.ShowIcon = false;
+            this.picStartTime.DataBindings.Add("BackColor", this.txtBoxStartTime, "BackColor", false, DataSourceUpdateMode.OnPropertyChanged);
+            this.picEndTime.DataBindings.Add("BackColor", this.txtBoxEndTime, "BackColor", false, DataSourceUpdateMode.OnPropertyChanged);
+
             this._lastSearch = new DateTime(0);
             this._lastRunSearched = -1;
             this._settings = settings;
@@ -116,46 +119,70 @@ namespace LiveSplit.RunHighlighter
             return runHistory;
         }
 
+        void ResetTlpVideo()
+        {
+            txtBoxStartTime.Text = txtBoxEndTime.Text = String.Empty;
+            txtBoxEndTime.ForeColor = txtBoxStartTime.ForeColor = System.Drawing.SystemColors.WindowText;
+            txtBoxEndTime.BackColor = txtBoxStartTime.BackColor = System.Drawing.SystemColors.Control;
+            tooltipOutOfVid.SetToolTip(txtBoxStartTime, "");
+            tooltipOutOfVid.SetToolTip(txtBoxEndTime, "");
+            toolTipUnreliableTime.SetToolTip(txtBoxStartTime, "");
+            toolTipUnreliableTime.SetToolTip(txtBoxEndTime, "");
+            picStartTime.Image = picEndTime.Image = null;
+            tlpVideo.Enabled = chkAutomateHighlight.Enabled = false;
+        }
+
         bool ProcessHighlight(RunHistory.Item run)
         {
             _highlightInfo = null;
             txtBoxVidUrl.Text = "Searching...";
-            txtBoxStartTime.Text = txtBoxEndTime.Text = String.Empty;
-            txtBoxEndTime.ForeColor = txtBoxStartTime.ForeColor = System.Drawing.SystemColors.WindowText;
-            tooltipOutOfVid.SetToolTip(txtBoxStartTime, "");
-            tooltipOutOfVid.SetToolTip(txtBoxEndTime, "");
-            tlpVideo.Enabled = false;
+
+            ResetTlpVideo();
             tlpVideo.Refresh();
 
-            if ((_video = SearchVideo(run)) != null)
-            {
-                txtBoxVidUrl.Text = String.Format("twitch.tv/{0}/manager/{1}/highlight", _video.channel.name, _video._id);
-                tlpVideo.Enabled = true;
-            }
-            else
+            if ((_video = SearchVideo(run)) == null)
             {
                 txtBoxVidUrl.Text = "No video found";
                 return false;
             }
 
             _highlightInfo = new HighlightInfo(_video, run, _settings.HighlightBuffer);
+            txtBoxVidUrl.Text = _video.url;
+            tlpVideo.Enabled = true;
+
             var outOfVidTooltip = "The recording is still being processed according to Twitch's API.\nThis time might be out of the video's range until the recording is complete.";
+            var unreliableTooltip = "This time could be incorrect. Checking it is highly recommended.\nThis is due to a failure to synchronize with the NIST time server during the run.";
 
             txtBoxStartTime.Text = _highlightInfo.StartTimeString;
             if (_highlightInfo.IsStartOutOfVideo)
             {
                 txtBoxStartTime.ForeColor = System.Drawing.Color.Red;
                 tooltipOutOfVid.SetToolTip(txtBoxStartTime, outOfVidTooltip);
-                chkAutomateHighlight.Enabled = chkAutomateHighlight.Checked = false;
+            }
+
+            if (!run.IsUtcStartReliable)
+            {
+                txtBoxStartTime.BackColor = System.Drawing.Color.PaleGoldenrod;
+                picStartTime.Image = Properties.Resources.warning;
+                toolTipUnreliableTime.SetToolTip(picStartTime, unreliableTooltip);
             }
 
             txtBoxEndTime.Text = _highlightInfo.EndTimeString;
             if (_highlightInfo.IsEndOutOfVideo)
             {
-                    tooltipOutOfVid.SetToolTip(txtBoxEndTime, outOfVidTooltip);
-                    txtBoxEndTime.ForeColor = System.Drawing.Color.Red;
-                    chkAutomateHighlight.Enabled = chkAutomateHighlight.Checked = false;
+                tooltipOutOfVid.SetToolTip(txtBoxEndTime, outOfVidTooltip);
+                txtBoxEndTime.ForeColor = System.Drawing.Color.Red;
             }
+
+            if (!run.IsUtcEndReliable)
+            {
+                txtBoxEndTime.BackColor = System.Drawing.Color.PaleGoldenrod;
+                picEndTime.Image = Properties.Resources.warning;
+                toolTipUnreliableTime.SetToolTip(picEndTime, unreliableTooltip);
+            }
+
+            if (_highlightInfo.IsOutOfVideo || !run.IsUtcStartReliable || !run.IsUtcEndReliable)
+                chkAutomateHighlight.Enabled = chkAutomateHighlight.Checked = false;
 
             return true;
         }
@@ -208,11 +235,6 @@ namespace LiveSplit.RunHighlighter
             }
 
             return null;
-        }
-
-        private void btnOpenVideoManager_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start("http://" + txtBoxVidUrl.Text);
         }
 
         private void btnHighlight_Click(object sender, EventArgs e)
@@ -275,7 +297,7 @@ namespace LiveSplit.RunHighlighter
             e.Handled = true;
         }
 
-        private void txtBoxEndTime_Click(object sender, EventArgs e)
+        private void txtBox_SelectAll(object sender, EventArgs e)
         {
             var t = (TextBox)sender;
             t.SelectAll();

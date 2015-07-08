@@ -102,6 +102,7 @@
     <Content Include="..\Components\update.LiveSplit.RunHighlighter.xml">
       <Link>update.LiveSplit.RunHighlighter.xml</Link>
     </Content>
+    <None Include="Resources\error.png" />
     <None Include="Resources\highlightInjection.js" />
     <None Include="Resources\waitForKeyElements.js" />
   </ItemGroup>

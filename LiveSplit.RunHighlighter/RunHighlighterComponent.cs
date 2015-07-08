@@ -27,6 +27,8 @@ namespace LiveSplit.RunHighlighter
         public RunHighlighterSettings Settings { get; set; }
         public DateTime? StartTime { get; private set; }
         public DateTime? EndTime { get; private set; }
+        public bool IsStartTimeReliable { get; private set; }
+        public bool IsEndTimeReliable { get; private set; }
 
         private LiveSplitState _state;
         private TimerPhase _prevPhase;
@@ -69,7 +71,7 @@ namespace LiveSplit.RunHighlighter
         {
             var previousStartThread = _nistStartThread;
 
-            _nistStartThread = NIST.UtcNowAsync(d =>
+            _nistStartThread = NIST.UtcNowAsync((date, serverSuccess) =>
             {
                 if (previousStartThread != null && previousStartThread.Status == TaskStatus.Running)
                 {
@@ -83,8 +85,10 @@ namespace LiveSplit.RunHighlighter
                     _nistEndThread.Wait();
                 }
 
-                StartTime = d;
+                StartTime = date;
+                IsStartTimeReliable = serverSuccess;
                 EndTime = null;
+                IsEndTimeReliable = true;
             });
         }
 
@@ -120,7 +124,7 @@ namespace LiveSplit.RunHighlighter
             {
                 var previousNistEndThread = _nistEndThread;
 
-                _nistEndThread = NIST.UtcNowAsync(d =>
+                _nistEndThread = NIST.UtcNowAsync((date, serverSuccess) =>
                 {
                     if (_nistStartThread != null && _nistStartThread.Status == TaskStatus.Running)
                     {
@@ -130,12 +134,13 @@ namespace LiveSplit.RunHighlighter
 
                     if (previousNistEndThread != null && previousNistEndThread.Status == TaskStatus.Running)
                     {
-                        Debug.WriteLine("End: Waiting for nistStartThread to complete.");
+                        Debug.WriteLine("End: Waiting for nistEndThread to complete.");
                         previousNistEndThread.Wait();
                     }
 
-                    EndTime = d;
-                    RunHistory.AddRun(new RunHistory.Item(StartTime.Value, EndTime.Value, state.CurrentTime, _state.Run.GameName));
+                    EndTime = date;
+                    IsEndTimeReliable = serverSuccess;
+                    RunHistory.AddRun(new RunHistory.Item(StartTime.Value, IsStartTimeReliable, EndTime.Value, IsEndTimeReliable, state.CurrentTime, _state.Run.GameName));
                     Debug.WriteLine("Added a new run.");
                 });
             }

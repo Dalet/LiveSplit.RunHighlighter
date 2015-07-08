@@ -30,14 +30,18 @@ namespace LiveSplit.RunHighlighter
         {
             public DateTime UtcStart { get; private set; }
             public DateTime UtcEnd { get; private set; }
+            public bool IsUtcStartReliable { get; private set; }
+            public bool IsUtcEndReliable { get; private set; }
             public Time Time { get; private set; }
             public string Game { get; private set; }
 
-            public Item(DateTime utcStart, DateTime utcEnd, Time time, string game = null)
+            public Item(DateTime utcStart, bool isStartReliable, DateTime utcEnd, bool isEndReliable, Time time, string game = null)
                 : this()
             {
                 this.UtcStart = utcStart;
                 this.UtcEnd = utcEnd;
+                this.IsUtcStartReliable = isStartReliable;
+                this.IsUtcEndReliable = isEndReliable;
                 this.Time = time;
                 this.Game = game;
             }
@@ -102,6 +106,8 @@ namespace LiveSplit.RunHighlighter
                 dynamic json = new DynamicJsonObject();
 
                 json.utc_start = UtcStart.Ticks;
+                json.is_start_reliable = IsUtcStartReliable;
+                json.is_end_reliable = IsUtcEndReliable;
                 json.utc_end = UtcEnd.Ticks;
                 json.time = Time.ToJson();
                 json.game = Game;
@@ -116,11 +122,19 @@ namespace LiveSplit.RunHighlighter
                     DateTime utcStart = new DateTime(long.Parse(json.utc_start));
                     DateTime utcEnd = new DateTime(long.Parse(json.utc_end));
 
+                    bool isStartReliable = true;
+                    bool isEndReliable = true;
+                    
+                    if (json.is_start_reliable != null)
+                        isStartReliable = bool.Parse(json.is_start_reliable);
+                    if (json.is_end_reliable != null)
+                        isEndReliable = bool.Parse(json.is_end_reliable);
+
                     TimeSpan realTime = TimeSpan.Parse(json.time.realTime);
                     TimeSpan? gameTime = json.time.gameTime != null ? TimeSpan.Parse(json.time.gameTime) : null;
                     var time = new Time(realTime, gameTime);
 
-                    return new Item(utcStart, utcEnd, time, json.game);
+                    return new Item(utcStart, isStartReliable, utcEnd, isEndReliable, time, json.game);
                 }
                 catch
                 {

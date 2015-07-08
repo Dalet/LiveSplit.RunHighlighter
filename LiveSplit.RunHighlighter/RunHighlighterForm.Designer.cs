@@ -35,11 +35,12 @@
             this.gbVideo = new System.Windows.Forms.GroupBox();
             this.tlpVideo = new System.Windows.Forms.TableLayoutPanel();
             this.txtBoxVidUrl = new System.Windows.Forms.TextBox();
-            this.btnOpenVideoManager = new System.Windows.Forms.Button();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.picStartTime = new System.Windows.Forms.PictureBox();
             this.txtBoxStartTime = new System.Windows.Forms.TextBox();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.picEndTime = new System.Windows.Forms.PictureBox();
             this.txtBoxEndTime = new System.Windows.Forms.TextBox();
             this.btnHighlight = new System.Windows.Forms.Button();
             this.chkAutomateHighlight = new System.Windows.Forms.CheckBox();
@@ -47,12 +48,15 @@
             this.tlpRunHistory = new System.Windows.Forms.TableLayoutPanel();
             this.lstRunHistory = new System.Windows.Forms.ListBox();
             this.tooltipOutOfVid = new System.Windows.Forms.ToolTip(this.components);
+            this.toolTipUnreliableTime = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.gbVideo.SuspendLayout();
             this.tlpVideo.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picStartTime)).BeginInit();
             this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picEndTime)).BeginInit();
             this.gbRunHistory.SuspendLayout();
             this.tlpRunHistory.SuspendLayout();
             this.SuspendLayout();
@@ -73,7 +77,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(284, 263);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(284, 269);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // label1
@@ -104,7 +108,7 @@
             this.gbVideo.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbVideo.Location = new System.Drawing.Point(3, 132);
             this.gbVideo.Name = "gbVideo";
-            this.gbVideo.Size = new System.Drawing.Size(278, 128);
+            this.gbVideo.Size = new System.Drawing.Size(278, 134);
             this.gbVideo.TabIndex = 2;
             this.gbVideo.TabStop = false;
             this.gbVideo.Text = "Video";
@@ -117,7 +121,6 @@
             this.tlpVideo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tlpVideo.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tlpVideo.Controls.Add(this.txtBoxVidUrl, 0, 0);
-            this.tlpVideo.Controls.Add(this.btnOpenVideoManager, 1, 0);
             this.tlpVideo.Controls.Add(this.tableLayoutPanel3, 0, 1);
             this.tlpVideo.Controls.Add(this.btnHighlight, 0, 2);
             this.tlpVideo.Controls.Add(this.chkAutomateHighlight, 1, 2);
@@ -129,31 +132,20 @@
             this.tlpVideo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tlpVideo.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tlpVideo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-            this.tlpVideo.Size = new System.Drawing.Size(272, 109);
+            this.tlpVideo.Size = new System.Drawing.Size(272, 115);
             this.tlpVideo.TabIndex = 0;
             // 
             // txtBoxVidUrl
             // 
             this.txtBoxVidUrl.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.tlpVideo.SetColumnSpan(this.txtBoxVidUrl, 2);
             this.txtBoxVidUrl.Location = new System.Drawing.Point(3, 4);
             this.txtBoxVidUrl.Name = "txtBoxVidUrl";
             this.txtBoxVidUrl.ReadOnly = true;
-            this.txtBoxVidUrl.Size = new System.Drawing.Size(179, 20);
+            this.txtBoxVidUrl.Size = new System.Drawing.Size(266, 20);
             this.txtBoxVidUrl.TabIndex = 0;
             this.txtBoxVidUrl.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
-            // btnOpenVideoManager
-            // 
-            this.btnOpenVideoManager.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOpenVideoManager.AutoSize = true;
-            this.btnOpenVideoManager.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
-            this.btnOpenVideoManager.Location = new System.Drawing.Point(188, 3);
-            this.btnOpenVideoManager.Name = "btnOpenVideoManager";
-            this.btnOpenVideoManager.Size = new System.Drawing.Size(81, 23);
-            this.btnOpenVideoManager.TabIndex = 1;
-            this.btnOpenVideoManager.Text = "Open";
-            this.btnOpenVideoManager.UseVisualStyleBackColor = true;
-            this.btnOpenVideoManager.Click += new System.EventHandler(this.btnOpenVideoManager_Click);
+            this.txtBoxVidUrl.Click += new System.EventHandler(this.txtBox_SelectAll);
             // 
             // tableLayoutPanel3
             // 
@@ -170,21 +162,31 @@
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(266, 45);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(266, 51);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
             // groupBox2
             // 
-            this.groupBox2.AutoSize = true;
-            this.groupBox2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox2.Controls.Add(this.picStartTime);
             this.groupBox2.Controls.Add(this.txtBoxStartTime);
             this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(127, 39);
+            this.groupBox2.Size = new System.Drawing.Size(127, 45);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Start Time";
+            // 
+            // picStartTime
+            // 
+            this.picStartTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.picStartTime.Location = new System.Drawing.Point(6, 18);
+            this.picStartTime.Margin = new System.Windows.Forms.Padding(0);
+            this.picStartTime.Name = "picStartTime";
+            this.picStartTime.Size = new System.Drawing.Size(16, 16);
+            this.picStartTime.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picStartTime.TabIndex = 1;
+            this.picStartTime.TabStop = false;
             // 
             // txtBoxStartTime
             // 
@@ -195,21 +197,31 @@
             this.txtBoxStartTime.Size = new System.Drawing.Size(121, 20);
             this.txtBoxStartTime.TabIndex = 0;
             this.txtBoxStartTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtBoxStartTime.Click += new System.EventHandler(this.txtBoxEndTime_Click);
+            this.txtBoxStartTime.Click += new System.EventHandler(this.txtBox_SelectAll);
             this.txtBoxStartTime.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxEndTime_KeyPress);
             // 
             // groupBox3
             // 
-            this.groupBox3.AutoSize = true;
-            this.groupBox3.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.groupBox3.Controls.Add(this.picEndTime);
             this.groupBox3.Controls.Add(this.txtBoxEndTime);
             this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox3.Location = new System.Drawing.Point(136, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(127, 39);
+            this.groupBox3.Size = new System.Drawing.Size(127, 45);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "End Time";
+            // 
+            // picEndTime
+            // 
+            this.picEndTime.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.picEndTime.Location = new System.Drawing.Point(6, 18);
+            this.picEndTime.Margin = new System.Windows.Forms.Padding(0);
+            this.picEndTime.Name = "picEndTime";
+            this.picEndTime.Size = new System.Drawing.Size(16, 16);
+            this.picEndTime.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.picEndTime.TabIndex = 1;
+            this.picEndTime.TabStop = false;
             // 
             // txtBoxEndTime
             // 
@@ -221,15 +233,15 @@
             this.txtBoxEndTime.Size = new System.Drawing.Size(121, 20);
             this.txtBoxEndTime.TabIndex = 0;
             this.txtBoxEndTime.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtBoxEndTime.Click += new System.EventHandler(this.txtBoxEndTime_Click);
+            this.txtBoxEndTime.Click += new System.EventHandler(this.txtBox_SelectAll);
             this.txtBoxEndTime.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxEndTime_KeyPress);
             // 
             // btnHighlight
             // 
             this.btnHighlight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHighlight.Location = new System.Drawing.Point(3, 83);
+            this.btnHighlight.Location = new System.Drawing.Point(3, 89);
             this.btnHighlight.Name = "btnHighlight";
-            this.btnHighlight.Size = new System.Drawing.Size(179, 23);
+            this.btnHighlight.Size = new System.Drawing.Size(182, 23);
             this.btnHighlight.TabIndex = 3;
             this.btnHighlight.Text = "Highlight";
             this.btnHighlight.UseVisualStyleBackColor = true;
@@ -239,7 +251,8 @@
             // 
             this.chkAutomateHighlight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkAutomateHighlight.AutoSize = true;
-            this.chkAutomateHighlight.Location = new System.Drawing.Point(188, 86);
+            this.chkAutomateHighlight.Location = new System.Drawing.Point(191, 92);
+            this.chkAutomateHighlight.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this.chkAutomateHighlight.Name = "chkAutomateHighlight";
             this.chkAutomateHighlight.Size = new System.Drawing.Size(81, 17);
             this.chkAutomateHighlight.TabIndex = 4;
@@ -300,11 +313,20 @@
             this.tooltipOutOfVid.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.tooltipOutOfVid.ToolTipTitle = "Time possibly out of the video\'s range at the moment";
             // 
+            // toolTipUnreliableTime
+            // 
+            this.toolTipUnreliableTime.AutoPopDelay = 32767;
+            this.toolTipUnreliableTime.InitialDelay = 25;
+            this.toolTipUnreliableTime.ReshowDelay = 0;
+            this.toolTipUnreliableTime.ShowAlways = true;
+            this.toolTipUnreliableTime.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Warning;
+            this.toolTipUnreliableTime.ToolTipTitle = "Potentially imprecise time";
+            // 
             // RunHighlighterForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 263);
+            this.ClientSize = new System.Drawing.Size(284, 269);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -319,11 +341,12 @@
             this.tlpVideo.ResumeLayout(false);
             this.tlpVideo.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
-            this.tableLayoutPanel3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picStartTime)).EndInit();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picEndTime)).EndInit();
             this.gbRunHistory.ResumeLayout(false);
             this.tlpRunHistory.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -338,7 +361,6 @@
         private System.Windows.Forms.GroupBox gbVideo;
         private System.Windows.Forms.TableLayoutPanel tlpVideo;
         private System.Windows.Forms.TextBox txtBoxVidUrl;
-        private System.Windows.Forms.Button btnOpenVideoManager;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox txtBoxStartTime;
@@ -350,5 +372,8 @@
         private System.Windows.Forms.ToolTip tooltipOutOfVid;
         private System.Windows.Forms.Button btnHighlight;
         private System.Windows.Forms.CheckBox chkAutomateHighlight;
+        private System.Windows.Forms.ToolTip toolTipUnreliableTime;
+        private System.Windows.Forms.PictureBox picStartTime;
+        private System.Windows.Forms.PictureBox picEndTime;
     }
 }
