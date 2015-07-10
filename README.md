@@ -2,7 +2,7 @@ LiveSplit.RunHighlighter
 ========================
 Run Highlighter is a [LiveSplit](http://livesplit.org/) component that helps you highlight your runs.
 
-![Image](http://i.imgur.com/e8Mg7Wv.png)
+![Image](http://i.imgur.com/zbul44q.png)
 
 Features
 --------
