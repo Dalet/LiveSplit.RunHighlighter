@@ -77,7 +77,7 @@
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(284, 269);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(284, 262);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // label1
@@ -106,9 +106,9 @@
             this.tableLayoutPanel1.SetColumnSpan(this.gbVideo, 2);
             this.gbVideo.Controls.Add(this.tlpVideo);
             this.gbVideo.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.gbVideo.Location = new System.Drawing.Point(3, 132);
+            this.gbVideo.Location = new System.Drawing.Point(3, 130);
             this.gbVideo.Name = "gbVideo";
-            this.gbVideo.Size = new System.Drawing.Size(278, 134);
+            this.gbVideo.Size = new System.Drawing.Size(278, 129);
             this.gbVideo.TabIndex = 2;
             this.gbVideo.TabStop = false;
             this.gbVideo.Text = "Video";
@@ -132,7 +132,7 @@
             this.tlpVideo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
             this.tlpVideo.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tlpVideo.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 29F));
-            this.tlpVideo.Size = new System.Drawing.Size(272, 115);
+            this.tlpVideo.Size = new System.Drawing.Size(272, 110);
             this.tlpVideo.TabIndex = 0;
             // 
             // txtBoxVidUrl
@@ -162,17 +162,17 @@
             this.tableLayoutPanel3.Name = "tableLayoutPanel3";
             this.tableLayoutPanel3.RowCount = 1;
             this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 60F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(266, 51);
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(266, 46);
             this.tableLayoutPanel3.TabIndex = 2;
             // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.picStartTime);
             this.groupBox2.Controls.Add(this.txtBoxStartTime);
-            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox2.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox2.Location = new System.Drawing.Point(3, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(127, 45);
+            this.groupBox2.Size = new System.Drawing.Size(127, 40);
             this.groupBox2.TabIndex = 0;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Start Time";
@@ -204,10 +204,10 @@
             // 
             this.groupBox3.Controls.Add(this.picEndTime);
             this.groupBox3.Controls.Add(this.txtBoxEndTime);
-            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox3.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBox3.Location = new System.Drawing.Point(136, 3);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(127, 45);
+            this.groupBox3.Size = new System.Drawing.Size(127, 40);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "End Time";
@@ -239,7 +239,7 @@
             // btnHighlight
             // 
             this.btnHighlight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnHighlight.Location = new System.Drawing.Point(3, 89);
+            this.btnHighlight.Location = new System.Drawing.Point(3, 84);
             this.btnHighlight.Name = "btnHighlight";
             this.btnHighlight.Size = new System.Drawing.Size(182, 23);
             this.btnHighlight.TabIndex = 3;
@@ -251,7 +251,7 @@
             // 
             this.chkAutomateHighlight.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
             this.chkAutomateHighlight.AutoSize = true;
-            this.chkAutomateHighlight.Location = new System.Drawing.Point(191, 92);
+            this.chkAutomateHighlight.Location = new System.Drawing.Point(191, 87);
             this.chkAutomateHighlight.Margin = new System.Windows.Forms.Padding(3, 3, 0, 3);
             this.chkAutomateHighlight.Name = "chkAutomateHighlight";
             this.chkAutomateHighlight.Size = new System.Drawing.Size(81, 17);
@@ -266,7 +266,7 @@
             this.gbRunHistory.Dock = System.Windows.Forms.DockStyle.Fill;
             this.gbRunHistory.Location = new System.Drawing.Point(3, 32);
             this.gbRunHistory.Name = "gbRunHistory";
-            this.gbRunHistory.Size = new System.Drawing.Size(278, 94);
+            this.gbRunHistory.Size = new System.Drawing.Size(278, 92);
             this.gbRunHistory.TabIndex = 3;
             this.gbRunHistory.TabStop = false;
             this.gbRunHistory.Text = "Run History";
@@ -281,7 +281,7 @@
             this.tlpRunHistory.Name = "tlpRunHistory";
             this.tlpRunHistory.RowCount = 1;
             this.tlpRunHistory.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tlpRunHistory.Size = new System.Drawing.Size(272, 75);
+            this.tlpRunHistory.Size = new System.Drawing.Size(272, 73);
             this.tlpRunHistory.TabIndex = 0;
             // 
             // lstRunHistory
@@ -300,7 +300,7 @@
             "0:50/0:50 74 minutes ago"});
             this.lstRunHistory.Location = new System.Drawing.Point(3, 3);
             this.lstRunHistory.Name = "lstRunHistory";
-            this.lstRunHistory.Size = new System.Drawing.Size(266, 69);
+            this.lstRunHistory.Size = new System.Drawing.Size(266, 67);
             this.lstRunHistory.TabIndex = 0;
             this.lstRunHistory.SelectedIndexChanged += new System.EventHandler(this.lstRunHistory_SelectedIndexChanged);
             // 
@@ -326,7 +326,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 269);
+            this.ClientSize = new System.Drawing.Size(284, 262);
             this.Controls.Add(this.tableLayoutPanel1);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
