@@ -1,12 +1,15 @@
 <updates>
-     <update version="0.4">
-        <files>
-            <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
-        </files>
-        <changelog>
-            <change>
-				   First github release.
-            </change>
-        </changelog>
-    </update>
+   <update version="0.4.1">
+      <files>
+         <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
+      </files>
+      <changelog>
+         <change>
+            Added a warning when a time range is potentially incorrect.
+         </change>
+         <change>
+            Minor tweaks.
+         </change>
+      </changelog>
+   </update>
 </updates>
