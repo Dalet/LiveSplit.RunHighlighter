@@ -129,7 +129,9 @@ namespace LiveSplit.RunHighlighter
             toolTipUnreliableTime.SetToolTip(txtBoxStartTime, "");
             toolTipUnreliableTime.SetToolTip(txtBoxEndTime, "");
             picStartTime.Image = picEndTime.Image = null;
-            tlpVideo.Enabled = chkAutomateHighlight.Enabled = false;
+            chkAutomateHighlight.Enabled = true;
+            chkAutomateHighlight.Checked = false;
+            tlpVideo.Enabled = false;
         }
 
         bool ProcessHighlight(RunHistory.Item run)
