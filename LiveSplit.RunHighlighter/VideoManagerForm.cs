@@ -11,11 +11,13 @@ namespace LiveSplit.RunHighlighter
         public string Channel { get; private set; }
 
         bool _isJavaScriptInjected;
+        RunHighlighterSettings _settings;
 
-        public VideoManagerForm(HighlightInfo highlightInfo, bool automated = false)
+        public VideoManagerForm(RunHighlighterSettings settings, HighlightInfo highlightInfo, bool automated = false)
         {
             InitializeComponent();
 
+            this._settings = settings;
             this.ShowIcon = false;
             this.HighlightInfo = highlightInfo;
             this.Automated = automated;
@@ -48,7 +50,7 @@ namespace LiveSplit.RunHighlighter
                 { "{start_time}", ((int)HighlightInfo.StartTime.TotalSeconds).ToString() },
                 { "{end_time}", ((int)HighlightInfo.EndTime.TotalSeconds).ToString() },
                 { "{duration}", HighlightInfo.HighlightTimeString(HighlightInfo.EndTime - HighlightInfo.StartTime) },
-                { "{title}", GetTitle() },
+                { "{title}", HighlightInfo.Title },
                 { "{description}", GetDescription() },
                 { "{tag_list}", "speedrun" },
                 { "{lang}", "en" },
@@ -59,39 +61,30 @@ namespace LiveSplit.RunHighlighter
 
             foreach (string key in varList.Keys)
             {
-                js = js.Replace(key, varList[key]);
+                js = js.Replace(key, EscapeSpecialChars(varList[key]));
             }
 
             return js;
         }
 
-        string GetTitle()
+        static string EscapeSpecialChars(string str)
         {
-            var formatter = new TimeFormatters.RegularTimeFormatter(TimeFormatters.TimeAccuracy.Seconds);
-            var ts = HighlightInfo.Run.Time.GameTime.Value;
-            if (ts.Milliseconds >= 500)
-                ts += TimeSpan.FromSeconds(1);
-            var time = formatter.Format(ts);
+            str = str.Replace("\\", "\\\\");
+            str = str.Replace("\r", "\\r");
+            str = str.Replace("\n", "\\n");
+            str = str.Replace("\"", "\\\"");
 
-            ts = HighlightInfo.Run.Time.RealTime.Value;
-            if (ts.Milliseconds >= 500)
-                ts += TimeSpan.FromSeconds(1);
-            var rtaTime = formatter.Format(ts);
-
-            if (rtaTime == time)
-                rtaTime = "";
-            else
-                rtaTime = " (" + rtaTime + " RTA)";
-
-            return String.Format("{0} speedrun in {1}{2}", HighlightInfo.Run.Game, time, rtaTime);
+            return str;
         }
 
         string GetDescription()
         {
+            string newlines = !String.IsNullOrEmpty(HighlightInfo.Description) ? "\n\n" : String.Empty;
+
             if (Automated)
-                return "Automatically highlighted by Run Highlighter\\nhttps://github.com/Dalet/LiveSplit.RunHighlighter/releases";
+                return HighlightInfo.Description + newlines + "Automatically highlighted by Run Highlighter\nhttps://github.com/Dalet/LiveSplit.RunHighlighter/releases";
             else
-                return "Highlighted with Run Highlighter.\\nhttps://github.com/Dalet/LiveSplit.RunHighlighter/releases";
+                return HighlightInfo.Description + newlines + "Highlighted with Run Highlighter.\nhttps://github.com/Dalet/LiveSplit.RunHighlighter/releases";
         }
 
         object ExecuteJavascript(string code)

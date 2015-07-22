@@ -34,8 +34,9 @@ namespace LiveSplit.RunHighlighter
             public bool IsUtcEndReliable { get; private set; }
             public Time Time { get; private set; }
             public string Game { get; private set; }
+            public string Category { get; private set; }
 
-            public Item(DateTime utcStart, bool isStartReliable, DateTime utcEnd, bool isEndReliable, Time time, string game = null)
+            public Item(DateTime utcStart, bool isStartReliable, DateTime utcEnd, bool isEndReliable, Time time, string game = null, string category = null)
                 : this()
             {
                 this.UtcStart = utcStart;
@@ -44,6 +45,7 @@ namespace LiveSplit.RunHighlighter
                 this.IsUtcEndReliable = isEndReliable;
                 this.Time = time;
                 this.Game = game;
+                this.Category = category;
             }
 
             public string TimeString
@@ -111,6 +113,7 @@ namespace LiveSplit.RunHighlighter
                 json.utc_end = UtcEnd.Ticks;
                 json.time = Time.ToJson();
                 json.game = Game;
+                json.category = Category;
 
                 return json;
             }
@@ -124,17 +127,20 @@ namespace LiveSplit.RunHighlighter
 
                     bool isStartReliable = true;
                     bool isEndReliable = true;
-                    
+                    string category = String.Empty;
+
                     if (json.is_start_reliable != null)
                         isStartReliable = bool.Parse(json.is_start_reliable);
                     if (json.is_end_reliable != null)
                         isEndReliable = bool.Parse(json.is_end_reliable);
+                    if (json.category != null)
+                        category = json.category;
 
                     TimeSpan realTime = TimeSpan.Parse(json.time.realTime);
                     TimeSpan? gameTime = json.time.gameTime != null ? TimeSpan.Parse(json.time.gameTime) : null;
                     var time = new Time(realTime, gameTime);
 
-                    return new Item(utcStart, isStartReliable, utcEnd, isEndReliable, time, json.game);
+                    return new Item(utcStart, isStartReliable, utcEnd, isEndReliable, time, json.game, category);
                 }
                 catch
                 {

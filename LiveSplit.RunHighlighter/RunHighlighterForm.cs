@@ -148,7 +148,7 @@ namespace LiveSplit.RunHighlighter
                 return false;
             }
 
-            _highlightInfo = new HighlightInfo(_video, run, _settings.HighlightBuffer);
+            _highlightInfo = new HighlightInfo(_video, run, _settings);
             txtBoxVidUrl.Text = _video.url;
             tlpVideo.Enabled = true;
 
@@ -255,7 +255,7 @@ namespace LiveSplit.RunHighlighter
                         return;
                 }
 
-                using (var form = new VideoManagerForm(_highlightInfo, automated))
+                using (var form = new VideoManagerForm(_settings, _highlightInfo, automated))
                 {
                     form.ShowDialog(this);
                 }
