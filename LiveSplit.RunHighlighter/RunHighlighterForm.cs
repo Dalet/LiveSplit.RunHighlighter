@@ -38,6 +38,16 @@ namespace LiveSplit.RunHighlighter
             this.Text += " v" + ver.ToString(2) + (ver.Build > 0 ? "." + ver.Build : "");
             lstRunHistory.Items.Clear();
 
+            //make impossible to select another run while the video manager is open
+            lstRunHistory.GotFocus += (s, e) =>
+            {
+                if (_vidManager != null)
+                {
+                    lstRunHistory.Parent.Focus();
+                    MessageBox.Show(this, "Close the Internet Explorer window before selecting another run.", "Run Highlighter");
+                }
+            };
+
             this.Load += (s, e) =>
                 {
                     var uiThread = SynchronizationContext.Current;
@@ -253,7 +263,11 @@ namespace LiveSplit.RunHighlighter
             btnHighlight.Enabled = false;
             _vidManager = new VideoManager(_settings, _highlightInfo, automated);
             var uiThread = SynchronizationContext.Current;
-            _vidManager.Disposed += (s, arg) => uiThread.Post(d => btnHighlight.Enabled = true, null);
+            _vidManager.Disposed += (s, arg) => uiThread.Post(d =>
+            {
+                btnHighlight.Enabled = true;
+                _vidManager = null;
+            }, null);
         }
 
         private void txtBoxTwitchUsername_KeyPress(object sender, KeyPressEventArgs e)
