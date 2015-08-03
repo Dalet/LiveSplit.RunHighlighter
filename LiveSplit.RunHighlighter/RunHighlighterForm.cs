@@ -67,9 +67,6 @@ namespace LiveSplit.RunHighlighter
                         uiThread.Send(d => PopulateListbox(_runs), null);
                     });
 
-                    if (!Twitch.Instance.IsLoggedIn)
-                        Twitch.Instance.VerifyLogin();
-
                     if (!String.IsNullOrEmpty(_settings.TwitchUsername) && Twitch.IsValidUsername(_settings.TwitchUsername))
                         this.txtBoxTwitchUsername.Text = _settings.TwitchUsername;
                     else if (Twitch.Instance.IsLoggedIn)
