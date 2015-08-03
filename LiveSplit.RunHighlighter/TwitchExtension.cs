@@ -37,7 +37,7 @@ namespace LiveSplit.RunHighlighter
         public static bool IsValidUsername(string name)
         {
             var allowCharsRegex = new System.Text.RegularExpressions.Regex(@"([A-Z]|[a-z]|\d|_)");
-            return allowCharsRegex.Matches(name).Count == name.Length;
+            return !string.IsNullOrWhiteSpace(name) && allowCharsRegex.Matches(name).Count == name.Length;
         }
     }
 }

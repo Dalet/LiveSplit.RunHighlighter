@@ -99,6 +99,7 @@
             this.txtBoxTwitchUsername.Name = "txtBoxTwitchUsername";
             this.txtBoxTwitchUsername.Size = new System.Drawing.Size(181, 20);
             this.txtBoxTwitchUsername.TabIndex = 1;
+            this.txtBoxTwitchUsername.TextChanged += new System.EventHandler(this.txtBoxTwitchUsername_TextChanged);
             this.txtBoxTwitchUsername.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxTwitchUsername_KeyPress);
             // 
             // gbVideo

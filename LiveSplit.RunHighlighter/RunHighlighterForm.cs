@@ -67,7 +67,7 @@ namespace LiveSplit.RunHighlighter
                         uiThread.Send(d => PopulateListbox(_runs), null);
                     });
 
-                    if (!String.IsNullOrEmpty(_settings.TwitchUsername) && Twitch.IsValidUsername(_settings.TwitchUsername))
+                    if (Twitch.IsValidUsername(_settings.TwitchUsername))
                         this.txtBoxTwitchUsername.Text = _settings.TwitchUsername;
                     else if (Twitch.Instance.IsLoggedIn)
                         this.txtBoxTwitchUsername.Text = Twitch.Instance.ChannelName;
@@ -143,8 +143,16 @@ namespace LiveSplit.RunHighlighter
 
         bool ProcessHighlight(RunHistory.Item run)
         {
+            if (!Twitch.IsValidUsername(txtBoxTwitchUsername.Text))
+            {
+                MessageBox.Show(this, "Invalid Twitch username.", "Run Highlighter", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtBoxTwitchUsername.Focus();
+                return false;
+            }
+
             _highlightInfo = null;
             txtBoxVidUrl.Text = "Searching...";
+            _lastRunSearched = lstRunHistory.SelectedIndex;
 
             ResetTlpVideo();
             tlpVideo.Refresh();
@@ -152,6 +160,7 @@ namespace LiveSplit.RunHighlighter
             if ((_video = SearchVideo(run)) == null)
             {
                 txtBoxVidUrl.Text = "No video found";
+                _lastRunSearched = -1;
                 return false;
             }
 
@@ -246,6 +255,15 @@ namespace LiveSplit.RunHighlighter
             return null;
         }
 
+        private void SearchCurrentlySelected()
+        {
+            if (_runs == null || _runs.Count <= 0)
+                return;
+
+            if (lstRunHistory.SelectedIndex >= 0 && _lastRunSearched != lstRunHistory.SelectedIndex)
+                ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
+        }
+
         private void btnHighlight_Click(object sender, EventArgs e)
         {
             var automated = chkAutomateHighlight.Checked;
@@ -271,14 +289,8 @@ namespace LiveSplit.RunHighlighter
         {
             if (e.KeyChar == 13) //enter key
             {
-                if (_runs == null || _runs.Count <= 0)
-                    return;
-
                 if (lstRunHistory.SelectedIndex >= 0)
-                {
-                    ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
-                    _lastRunSearched = lstRunHistory.SelectedIndex;
-                }
+                    SearchCurrentlySelected();
                 else
                     lstRunHistory.SelectedIndex = 0;
             }
@@ -289,14 +301,7 @@ namespace LiveSplit.RunHighlighter
 
         private void lstRunHistory_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_runs == null || _runs.Count <= 0)
-                return;
-
-            if (lstRunHistory.SelectedIndex >= 0 && _lastRunSearched != lstRunHistory.SelectedIndex)
-            {
-                ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
-                _lastRunSearched = lstRunHistory.SelectedIndex;
-            }
+            SearchCurrentlySelected();
         }
 
         private void txtBoxEndTime_KeyPress(object sender, KeyPressEventArgs e)
@@ -308,6 +313,11 @@ namespace LiveSplit.RunHighlighter
         {
             var t = (TextBox)sender;
             t.SelectAll();
+        }
+
+        private void txtBoxTwitchUsername_TextChanged(object sender, EventArgs e)
+        {
+            _lastRunSearched = -1;
         }
     }
 }
