@@ -2,7 +2,7 @@ LiveSplit.RunHighlighter
 ========================
 Run Highlighter is a [LiveSplit](http://livesplit.org/) component that helps you highlight your runs.
 
-![Image](http://i.imgur.com/zbul44q.png)
+![Image](http://i.imgur.com/nkuuUpD.png)
 
 Features
 --------
@@ -26,6 +26,7 @@ The time added before and after the run. It is essential to correct the few seco
 
 Requirements
 ------------
+* Internet Explorer (version 11+ is recommended)
 * .NET 4.5 (Windows Vista or later)
 * [LiveSplit](http://livesplit.org/) 1.5 or later
 
