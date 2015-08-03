@@ -15,6 +15,7 @@ namespace LiveSplit.RunHighlighter
 
         private dynamic _video;
         private HighlightInfo _highlightInfo;
+        private VideoManager _vidManager;
 
         private DateTime _lastSearch;
         private int _lastRunSearched;
@@ -35,7 +36,6 @@ namespace LiveSplit.RunHighlighter
 
             var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.Text += " v" + ver.ToString(2) + (ver.Build > 0 ? "." + ver.Build : "");
-
             lstRunHistory.Items.Clear();
 
             this.Load += (s, e) =>
@@ -241,25 +241,19 @@ namespace LiveSplit.RunHighlighter
 
         private void btnHighlight_Click(object sender, EventArgs e)
         {
-            if (!Twitch.Instance.IsLoggedIn)
-                Twitch.Instance.VerifyLogin();
+            var automated = chkAutomateHighlight.Checked;
 
-            if (Twitch.Instance.IsLoggedIn)
+            if (automated)
             {
-                var automated = chkAutomateHighlight.Checked;
-
-                if (automated)
-                {
-                    var result = MessageBox.Show(this, "This will automatically create the highlight.\nDo you still want to do this?", "Confirm automatic highlighting", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                    if (result == DialogResult.No)
-                        return;
-                }
-
-                using (var form = new VideoManagerForm(_settings, _highlightInfo, automated))
-                {
-                    form.ShowDialog(this);
-                }
+                var result = MessageBox.Show(this, "This will automatically create the highlight.\nDo you still want to do this?", "Confirm automatic highlighting", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (result == DialogResult.No)
+                    return;
             }
+
+            btnHighlight.Enabled = false;
+            _vidManager = new VideoManager(_settings, _highlightInfo, automated);
+            var uiThread = SynchronizationContext.Current;
+            _vidManager.Disposed += (s, arg) => uiThread.Post(d => btnHighlight.Enabled = true, null);
         }
 
         private void txtBoxTwitchUsername_KeyPress(object sender, KeyPressEventArgs e)

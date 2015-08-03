@@ -62,8 +62,13 @@ namespace LiveSplit.RunHighlighter
                     _nistEndThread.Wait();
                 }
 
+                var originalTopMost = _state.Form.TopMost;
+                _state.Form.TopMost = false; //to ensure our Internet Explorer window isn't covered
+
                 using (var form = new RunHighlighterForm(Settings))
                     form.ShowDialog(state.Form);
+
+                _state.Form.TopMost = originalTopMost;
             }));
         }
 

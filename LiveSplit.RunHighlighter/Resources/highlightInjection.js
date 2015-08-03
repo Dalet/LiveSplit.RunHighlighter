@@ -28,9 +28,9 @@ function playerLoop() {
 function formLoop() {
     setTimeout(function () {
         if (count == 8) {
-            $("button.primary.button:contains('Describe Highlight')").trigger("click");
+            $("div .highlight-content").find("button")[0].click();
             if ({automated}) {
-                $("button.primary.button:contains('Create Highlight')").trigger("click");
+                $("div .highlight-content").find("button")[1].click();
             }
         } else {
             formLoop();
