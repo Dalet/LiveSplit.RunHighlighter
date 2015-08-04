@@ -1,4 +1,17 @@
 <updates>
+    <!--<update version="0.6">
+        <files>
+            <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>
+                Solved a huge memory leak by using Internet Explorer.
+            </change>
+            <change>
+                Fixed Auto-create only fully working with English Twitch.
+            </change>
+        </changelog>
+    </update>-->
    <update version="0.5">
       <files>
          <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>

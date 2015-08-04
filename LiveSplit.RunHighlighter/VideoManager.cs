@@ -17,7 +17,7 @@ namespace LiveSplit.RunHighlighter
         public string Channel { get; private set; }
 
         RunHighlighterSettings _settings;
-        InternetExplorer IE;
+        InternetExplorer _IE;
 
         public VideoManager(RunHighlighterSettings settings, HighlightInfo highlightInfo, bool automated = false)
         {
@@ -25,33 +25,33 @@ namespace LiveSplit.RunHighlighter
             this.HighlightInfo = highlightInfo;
             this.Automated = automated;
             this.Channel = HighlightInfo.ManagerURI.Segments[1].Substring(0, HighlightInfo.ManagerURI.Segments[1].IndexOf('/'));
-
             InitializeIE();
 
-            IE.Navigate(HighlightInfo.ManagerURL);
-            IE.Visible = true;            
+            _IE.Navigate(HighlightInfo.ManagerURL);
+            _IE.Visible = true;            
         }
 
         private void InitializeIE()
         {
-            IE = new SHDocVw.InternetExplorer();
+            _IE = new SHDocVw.InternetExplorer();
 
-            IE.ToolBar = 0;
-            IE.MenuBar = false;
-            IE.StatusBar = false;
-            IE.Width = 1110;
-            IE.Height = 670;
-            IE.DocumentComplete += IE_DocumentCompleted;
-            IE.OnQuit += () => Dispose();
+            _IE.ToolBar = 0;
+            _IE.MenuBar = false;
+            _IE.StatusBar = false;
+            _IE.Width = 1110;
+            _IE.Height = 670;
+            _IE.DocumentComplete += IE_DocumentCompleted;
+            _IE.OnQuit += () => Dispose();
         }
 
         private void IE_DocumentCompleted(object pDisp, ref object urlObj)
         {
             var url = new Uri((string)urlObj);
-            if ((url.Host != "twitch.tv" && url.Host != "www.twitch.tv") || url.LocalPath != this.HighlightInfo.ManagerURI.LocalPath)
-                return;
 
-            if (IE.ReadyState != tagREADYSTATE.READYSTATE_COMPLETE || !isLoggedInTwitch())
+            if ((url.Host != "twitch.tv" && url.Host != "www.twitch.tv") || url.LocalPath != this.HighlightInfo.ManagerURI.LocalPath)
+               return;
+
+            if (_IE.ReadyState != tagREADYSTATE.READYSTATE_COMPLETE)
                 return;
 
             var js = Properties.Resources.waitForKeyElements + "\n" + GetInjectionCode();
@@ -59,21 +59,9 @@ namespace LiveSplit.RunHighlighter
             Debug.WriteLine("JavaScript injected.");
         }
 
-        bool isLoggedInTwitch()
-        {
-            HTMLDocument doc = IE.Document;
-            foreach (IHTMLElement elem in doc.getElementsByTagName("div"))
-            {
-                if (elem.getAttribute("className") != null && elem.getAttribute("className").Contains("isLoggedIn"))
-                    return true;
-            }
-
-            return false;
-        }
-
         string GetInjectionCode()
         {
-            var document = IE.Document;
+            var document = _IE.Document;
             var varList = new Dictionary<string, string>
             {
                 { "{automated}", Automated ? "true" : "false" },
@@ -125,7 +113,7 @@ namespace LiveSplit.RunHighlighter
             {
                 try
                 {
-                    HTMLDocument doc = IE.Document;
+                    HTMLDocument doc = _IE.Document;
                     object script = doc.Script;
                     script.GetType().InvokeMember("eval", System.Reflection.BindingFlags.InvokeMethod, null, script, new object[] { code });
                 }
@@ -136,6 +124,7 @@ namespace LiveSplit.RunHighlighter
             });
             aThread.SetApartmentState(ApartmentState.STA);
             aThread.Start();
+            aThread.Join();
         }
 
         public void Dispose()
@@ -145,10 +134,10 @@ namespace LiveSplit.RunHighlighter
 
             IsDisposing = true;
 
-            if (IE != null)
+            if (_IE != null)
             {
-                IE.DocumentComplete -= IE_DocumentCompleted;
-                IE.Quit();
+                _IE.DocumentComplete -= IE_DocumentCompleted;
+                _IE.Quit();
             }
 
             Disposed?.Invoke(this, EventArgs.Empty);
