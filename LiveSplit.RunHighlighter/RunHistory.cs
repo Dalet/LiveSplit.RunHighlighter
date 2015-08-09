@@ -201,7 +201,7 @@ namespace LiveSplit.RunHighlighter
 
         static bool WriteRunHistory(IList<Item> runs)
         {
-            var funcStart = DateTime.UtcNow;
+            var stopWatch = Stopwatch.StartNew();
             List<dynamic> jsonRuns = new List<dynamic>();
 
             foreach (Item run in runs)
@@ -217,7 +217,7 @@ namespace LiveSplit.RunHighlighter
             try
             {
                 File.WriteAllText(Application.StartupPath + "\\" + RUN_HISTORY_FILE_NAME, "" + s);
-                Debug.WriteLine("WriteRunHistory() runtime: " + (DateTime.UtcNow - funcStart));
+                Debug.WriteLine($"WriteRunHistory() runtime: {stopWatch.Elapsed}");
                 return true;
             }
             catch (Exception e)
@@ -226,13 +226,13 @@ namespace LiveSplit.RunHighlighter
                 Trace.WriteLine("Couldn't write to the config file. Message: " + e.Message);
             }
 
-            Debug.WriteLine("WriteRunHistory() runtime: " + (DateTime.UtcNow - funcStart));
+            Debug.WriteLine($"WriteRunHistory() runtime: {stopWatch.Elapsed}");
             return false;
         }
 
         public static IList<Item> GetRunHistory()
         {
-            var funcStart = DateTime.UtcNow;
+            var stopWatch = Stopwatch.StartNew();
             var runs = new List<Item>();
             dynamic json;
 
@@ -266,7 +266,7 @@ namespace LiveSplit.RunHighlighter
                 }
             }
 
-            Debug.WriteLine("GetRunHistory() runtime: " + (DateTime.UtcNow - funcStart));
+            Debug.WriteLine($"GetRunHistory() runtime: {stopWatch.Elapsed}");
             return runs;
         }
     }

@@ -246,7 +246,7 @@
             this.btnHighlight.Name = "btnHighlight";
             this.btnHighlight.Size = new System.Drawing.Size(182, 23);
             this.btnHighlight.TabIndex = 3;
-            this.btnHighlight.Text = "Highlight";
+            this.btnHighlight.Text = "Open Highlighter...";
             this.btnHighlight.UseVisualStyleBackColor = true;
             this.btnHighlight.Click += new System.EventHandler(this.btnHighlight_Click);
             // 

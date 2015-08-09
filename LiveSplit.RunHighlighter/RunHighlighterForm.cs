@@ -17,7 +17,7 @@ namespace LiveSplit.RunHighlighter
         private HighlightInfo _highlightInfo;
         private VideoManager _vidManager;
 
-        private DateTime _lastSearch;
+        private int? _lastSearchTimestamp;
         private int _lastRunSearched;
 
         public RunHighlighterForm(RunHighlighterSettings settings)
@@ -30,7 +30,7 @@ namespace LiveSplit.RunHighlighter
             this.picStartTime.DataBindings.Add("BackColor", this.txtBoxStartTime, "BackColor", false, DataSourceUpdateMode.OnPropertyChanged);
             this.picEndTime.DataBindings.Add("BackColor", this.txtBoxEndTime, "BackColor", false, DataSourceUpdateMode.OnPropertyChanged);
 
-            this._lastSearch = new DateTime(0);
+            this._lastSearchTimestamp = null;
             this._lastRunSearched = -1;
             this._settings = settings;
 
@@ -208,8 +208,13 @@ namespace LiveSplit.RunHighlighter
         dynamic SearchVideo(RunHistory.Item run)
         {
             var requestDelay = TimeSpan.FromMilliseconds(1000);
-            if (DateTime.UtcNow - _lastSearch < requestDelay) //avoid spamming api requests
-                Thread.Sleep(requestDelay - (DateTime.UtcNow - _lastSearch));
+
+            var timeSinceLastSearch = _lastSearchTimestamp != null
+                ? TimeSpan.FromMilliseconds(Environment.TickCount - (double)_lastSearchTimestamp)
+                : requestDelay;
+
+            if (timeSinceLastSearch < requestDelay) //avoid spamming api requests
+                Thread.Sleep(requestDelay - timeSinceLastSearch);
 
             try
             {
@@ -217,7 +222,7 @@ namespace LiveSplit.RunHighlighter
                 if ((videos = Twitch.Instance.GetPastBroadcasts(txtBoxTwitchUsername.Text)) != null)
                 {
                     dynamic streamInfo = Twitch.Instance.GetStream(txtBoxTwitchUsername.Text);
-                    _lastSearch = DateTime.UtcNow;
+                    _lastSearchTimestamp = Environment.TickCount;
 
                     int i = 0;
                     foreach (dynamic video in videos)
@@ -260,8 +265,12 @@ namespace LiveSplit.RunHighlighter
             if (_runs == null || _runs.Count <= 0)
                 return;
 
-            if (lstRunHistory.SelectedIndex >= 0 && _lastRunSearched != lstRunHistory.SelectedIndex)
-                ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
+            var timeSinceLastSearch = _lastSearchTimestamp != null
+                ? TimeSpan.FromMilliseconds(Environment.TickCount - (double)_lastSearchTimestamp)
+                : TimeSpan.FromHours(42) ;
+
+            if (timeSinceLastSearch > TimeSpan.FromSeconds(0.1) && lstRunHistory.SelectedIndex >= 0 && _lastRunSearched != lstRunHistory.SelectedIndex)
+               ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
         }
 
         private void btnHighlight_Click(object sender, EventArgs e)

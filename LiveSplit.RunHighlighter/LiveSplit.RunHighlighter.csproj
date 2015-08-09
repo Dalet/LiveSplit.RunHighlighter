@@ -17,7 +17,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\..\..\..\Program Files %28x86%29\LiveSplit\Components\</OutputPath>
+    <OutputPath>..\..\..\..\..\Program Files\LiveSplit\Components\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="LiveSplit.Core">
-      <HintPath>..\..\..\..\..\Program Files (x86)\LiveSplit\LiveSplit.Core.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\LiveSplit\LiveSplit.Core.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.mshtml, Version=7.0.3300.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
@@ -50,7 +50,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UpdateManager">
-      <HintPath>..\..\..\..\..\Program Files (x86)\LiveSplit\UpdateManager.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files\LiveSplit\UpdateManager.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="WindowsBase" />

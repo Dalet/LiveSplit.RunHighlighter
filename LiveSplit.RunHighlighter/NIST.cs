@@ -5,26 +5,36 @@ using System.Threading.Tasks;
 namespace LiveSplit.RunHighlighter
 {
     public static class NIST
-    {      
-        static DateTime _lastTimeRequest = new DateTime(0, DateTimeKind.Utc);
+    {
+        static int? _requestCooldownTimestamp;  
+        static int? _lastRequestTimestamp;
         static DateTime? _lastResponse;
 
+        static readonly TimeSpan RequestDelay = TimeSpan.FromMinutes(10);
 
         public static bool UtcNow(out DateTime ret, bool requestServer = true)
         {
-            TimeSpan timeSinceLastRequest = DateTime.UtcNow - _lastTimeRequest;
+            var funcStartTickCount = Environment.TickCount;
+
+            TimeSpan? timeSinceLastRequest = null;
+            if(_lastRequestTimestamp != null)
+                timeSinceLastRequest = TimeSpan.FromMilliseconds((double)(funcStartTickCount - _lastRequestTimestamp));
+
             DateTime localUTC = DateTime.UtcNow;
 
-            if (requestServer && timeSinceLastRequest >= TimeSpan.FromMinutes(10))
-            {
-                var previousLastTimeRequest = _lastTimeRequest;
-                _lastTimeRequest = DateTime.UtcNow;
+            var cooldown = _requestCooldownTimestamp != null
+                ? TimeSpan.FromMilliseconds((double)(funcStartTickCount - _requestCooldownTimestamp))
+                : TimeSpan.FromHours(42);
 
-                var response = GetNISTDate();
+            if (requestServer && cooldown >= RequestDelay)
+            {
+                var response = GetNISTDate();                
 
                 if (response != null)
                 {
                     Debug.WriteLine("NIST Response: " + response);
+                    _lastRequestTimestamp = funcStartTickCount;
+                    _requestCooldownTimestamp = Environment.TickCount;
                     _lastResponse = response;
                     ret = response.Value;
                     return true;
@@ -32,14 +42,13 @@ namespace LiveSplit.RunHighlighter
                 else
                 {
                     Debug.WriteLine("Failed to retrieve time from server.");
-                    _lastTimeRequest = previousLastTimeRequest;
-                    return UtcNowBackup(localUTC, out ret);
+                    return UtcNowBackup(timeSinceLastRequest, localUTC, out ret);
                 }
             }
             else
             {
-                Debug.WriteLineIf(requestServer, "NIST server request cooldown: " + (TimeSpan.FromMinutes(10) - timeSinceLastRequest));
-                return UtcNowBackup(localUTC, out ret);
+                Debug.WriteLineIf(requestServer, "NIST server request cooldown: " + (RequestDelay - cooldown));
+                return UtcNowBackup(timeSinceLastRequest, localUTC, out ret);
             }
         }
 
@@ -53,16 +62,15 @@ namespace LiveSplit.RunHighlighter
             });
         }
 
-        private static bool UtcNowBackup(DateTime localTime, out DateTime ret)
+        private static bool UtcNowBackup(TimeSpan? timeSinceLastRequest, DateTime localTime, out DateTime ret)
         {
             if (_lastResponse != null) //just add the time elapsed since the last request instead
             {
-                TimeSpan timeSinceLastRequest = localTime - _lastTimeRequest;
-
-                ret = _lastResponse.Value + timeSinceLastRequest;
+                TimeSpan time = timeSinceLastRequest ?? TimeSpan.Zero;
+                ret = _lastResponse.Value + time;
 
                 Debug.WriteLine("Used last response as backup.");
-                Debug.WriteLine("NIST: " + ret + " Local UTC: " + DateTime.UtcNow);
+                Debug.WriteLine($"NIST: {ret} (Local UTC: {localTime})");
 
                 return true;
             }
@@ -79,7 +87,7 @@ namespace LiveSplit.RunHighlighter
 
         private static DateTime? GetNISTDate()
         {
-            DateTime funcStart = DateTime.UtcNow;
+            var funcStart = Stopwatch.StartNew();
 
             DateTime? date = null;
             string serverResponse = string.Empty;
@@ -118,7 +126,7 @@ namespace LiveSplit.RunHighlighter
             }
             catch { return null; }
 
-            return date - (DateTime.UtcNow - funcStart); //try to correct the connection delay
+            return date - funcStart.Elapsed; //try to correct the connection delay
         }
     }
 }
