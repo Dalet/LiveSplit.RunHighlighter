@@ -82,6 +82,12 @@ $('document').ready(function () {
         jNode.prop("value", "{lang}");
         count++;
     });
+    waitForKeyElements("a#left_close", function (jNode) {
+        var col = $('div#left_col')[0];
+        if (col !== undefined && col.getAttribute("class").indexOf("open") != -1) {
+            jNode.click();
+        }
+    });
 
     playerLoop();
     formLoop();
