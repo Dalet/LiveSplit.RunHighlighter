@@ -25,15 +25,31 @@ namespace LiveSplit.RunHighlighter
             this.HighlightInfo = highlightInfo;
             this.Automated = automated;
             this.Channel = HighlightInfo.ManagerURI.Segments[1].Substring(0, HighlightInfo.ManagerURI.Segments[1].IndexOf('/'));
-            InitializeIE();
 
-            _IE.Navigate(HighlightInfo.ManagerURL);
-            _IE.Visible = true;            
+            if (InitializeIE())
+            {
+                _IE.Navigate(HighlightInfo.ManagerURL);
+                _IE.Visible = true;
+            }
+            else
+            {
+                System.Windows.Forms.MessageBox.Show("A problem occurred while initializing Internet Explorer controls.\nPlease try again.", "Run Highlighter error",
+                    System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
+                Dispose();
+            }
         }
 
-        private void InitializeIE()
+        private bool InitializeIE()
         {
-            _IE = new SHDocVw.InternetExplorer();
+            try
+            {
+                _IE = new SHDocVw.InternetExplorer();
+            }
+            catch
+            {
+                _IE = null;
+                return false;
+            }
 
             _IE.ToolBar = 0;
             _IE.MenuBar = false;
@@ -42,6 +58,8 @@ namespace LiveSplit.RunHighlighter
             _IE.Height = 670;
             _IE.DocumentComplete += IE_DocumentCompleted;
             _IE.OnQuit += () => Dispose();
+
+            return true;
         }
 
         private void IE_DocumentCompleted(object pDisp, ref object urlObj)
@@ -49,7 +67,7 @@ namespace LiveSplit.RunHighlighter
             var url = new Uri((string)urlObj);
 
             if ((url.Host != "twitch.tv" && url.Host != "www.twitch.tv") || url.LocalPath != this.HighlightInfo.ManagerURI.LocalPath)
-               return;
+                return;
 
             if (_IE.ReadyState != tagREADYSTATE.READYSTATE_COMPLETE)
                 return;
