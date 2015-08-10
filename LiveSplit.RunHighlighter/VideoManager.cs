@@ -28,15 +28,15 @@ namespace LiveSplit.RunHighlighter
 
             if (InitializeIE())
             {
-                _IE.Navigate(HighlightInfo.ManagerURL);
+                _IE.Navigate2(HighlightInfo.ManagerURL);
                 _IE.Visible = true;
             }
             else
             {
+                Dispose();
                 System.Windows.Forms.MessageBox.Show("A problem occurred while initializing Internet Explorer controls.\nPlease try again.", "Run Highlighter error",
                     System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-                Dispose();
-            }
+            }                
         }
 
         private bool InitializeIE()
@@ -56,20 +56,20 @@ namespace LiveSplit.RunHighlighter
             _IE.StatusBar = false;
             _IE.Width = 1110;
             _IE.Height = 670;
-            _IE.DocumentComplete += IE_DocumentCompleted;
+            _IE.NavigateComplete2 += IE_NavigateComplete2;
             _IE.OnQuit += () => Dispose();
 
             return true;
         }
 
-        private void IE_DocumentCompleted(object pDisp, ref object urlObj)
+        private void IE_NavigateComplete2(object pDisp, ref object urlObj)
         {
             var url = new Uri((string)urlObj);
 
             if ((url.Host != "twitch.tv" && url.Host != "www.twitch.tv") || url.LocalPath != this.HighlightInfo.ManagerURI.LocalPath)
                 return;
 
-            if (_IE.ReadyState != tagREADYSTATE.READYSTATE_COMPLETE)
+            if (_IE.ReadyState != tagREADYSTATE.READYSTATE_INTERACTIVE && _IE.ReadyState != tagREADYSTATE.READYSTATE_COMPLETE)
                 return;
 
             var js = Properties.Resources.waitForKeyElements + "\n" + GetInjectionCode();
@@ -154,7 +154,7 @@ namespace LiveSplit.RunHighlighter
 
             if (_IE != null)
             {
-                _IE.DocumentComplete -= IE_DocumentCompleted;
+                _IE.NavigateComplete2 -= IE_NavigateComplete2;
                 _IE.Quit();
             }
 
