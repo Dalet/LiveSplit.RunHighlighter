@@ -10,32 +10,35 @@
             <change>
                 Fixed Auto-create only fully working with English Twitch.
             </change>
+            <change>
+                Fixed a rare accuracy issue.
+            </change>
         </changelog>
     </update>-->
-   <update version="0.5">
-      <files>
-         <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
-      </files>
-      <changelog>
-         <change>
-            Added customization for the pre-filled fields. (double click on Run Highlighter in the layout editor)
-         </change>
-         <change>
-            Settings actually save now.
-         </change>
-      </changelog>
-   </update>
-   <update version="0.4.1">
-      <files>
-         <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
-      </files>
-      <changelog>
-         <change>
-            Added a warning when a time range is potentially incorrect.
-         </change>
-         <change>
-            Minor tweaks.
-         </change>
-      </changelog>
-   </update>
+    <update version="0.5">
+        <files>
+            <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>
+                Added customization for the pre-filled fields. (double click on Run Highlighter in the layout editor)
+            </change>
+            <change>
+                Settings actually save now.
+            </change>
+        </changelog>
+    </update>
+    <update version="0.4.1">
+        <files>
+            <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>
+                Added a warning when a time range is potentially incorrect.
+            </change>
+            <change>
+                Minor tweaks.
+            </change>
+        </changelog>
+    </update>
 </updates>
