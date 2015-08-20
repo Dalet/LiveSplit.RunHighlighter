@@ -145,7 +145,7 @@ namespace LiveSplit.RunHighlighter
 
                     EndTime = date;
                     IsEndTimeReliable = serverSuccess;
-                    RunHistory.AddRun(new RunHistory.Item(StartTime.Value, IsStartTimeReliable, EndTime.Value, IsEndTimeReliable, state.CurrentTime, _state.Run.GameName));
+                    RunHistory.AddRun(new RunHistory.Item(StartTime.Value, IsStartTimeReliable, EndTime.Value, IsEndTimeReliable, state.CurrentTime, _state.Run.GameName, _state.Run.CategoryName));
                     Debug.WriteLine("Added a new run.");
                 });
             }
