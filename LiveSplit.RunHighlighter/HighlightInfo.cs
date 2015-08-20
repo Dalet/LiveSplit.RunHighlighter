@@ -108,12 +108,12 @@ namespace LiveSplit.RunHighlighter
             {
                 if (Run.Time.GameTime.Value != Run.Time.RealTime.Value)
                 {
-                    raw = raw.Replace(@"[RT!=GT]", "");
-                    raw = raw.Replace(@"[/RT!=GT]", "");
+                    raw = raw.Replace("[RT!=GT]", "");
+                    raw = raw.Replace("[/RT!=GT]", "");
                 }
                 else
                 {
-                    raw = raw.Replace("@[RT!=GT]" + match.Groups[1].Value + "[/RT!=GT]", "");
+                    raw = raw.Replace("[RT!=GT]" + match.Groups[1].Value + "[/RT!=GT]", "");
                 }
 
                 match = match.NextMatch();
