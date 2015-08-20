@@ -36,7 +36,7 @@ namespace LiveSplit.RunHighlighter
                 Dispose();
                 System.Windows.Forms.MessageBox.Show("A problem occurred while initializing Internet Explorer controls.\nPlease try again.", "Run Highlighter error",
                     System.Windows.Forms.MessageBoxButtons.OK, System.Windows.Forms.MessageBoxIcon.Error);
-            }                
+            }
         }
 
         private bool InitializeIE()

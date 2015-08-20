@@ -1,5 +1,24 @@
 <updates>
-    <!--<update version="0.6">
+    <update version="0.6.1">
+        <files>
+            <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>
+                Fixed the category not being saved in the run history.
+            </change>
+            <change>
+                Fixed [RT!=GT] block not behaving as expected when Real Time and Game Time are identical.
+            </change>
+            <change>
+                Fixed "Open Highlighter" button staying greyed out when initializing Internet Explorer failed.
+            </change>
+            <change>
+                Other minor fixes.
+            </change>
+        </changelog>
+    </update>
+    <update version="0.6">
         <files>
             <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
         </files>
@@ -14,7 +33,7 @@
                 Fixed a rare accuracy issue.
             </change>
         </changelog>
-    </update>-->
+    </update>
     <update version="0.5">
         <files>
             <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
