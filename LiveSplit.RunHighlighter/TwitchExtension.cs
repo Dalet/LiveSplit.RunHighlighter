@@ -11,7 +11,7 @@ namespace LiveSplit.RunHighlighter
 
         public IEnumerable<dynamic> GetPastBroadcasts(string username)
         {
-            return curl(String.Format("channels/{0}/videos?broadcasts=true", username)).videos;
+            return curl(String.Format("channels/{0}/videos?broadcasts=true", username)).videos as IEnumerable<dynamic>;
         }
 
         public dynamic GetStream(string username)
