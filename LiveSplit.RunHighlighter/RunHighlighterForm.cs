@@ -227,6 +227,8 @@ namespace LiveSplit.RunHighlighter
                     int i = 0;
                     foreach (dynamic video in videos)
                     {
+                        video.length = (double)video.length; //length is of decimal type sometimes
+
                         DateTime videoStart = Twitch.ParseDate(video.recorded_at);
                         DateTime videoEnd = videoStart.Add(TimeSpan.FromSeconds(video.length));
                         video.stream = streamInfo.stream; // null if stream is offline
@@ -286,12 +288,18 @@ namespace LiveSplit.RunHighlighter
 
             btnHighlight.Enabled = false;
             _vidManager = new VideoManager(_settings, _highlightInfo, automated);
+
             var uiThread = SynchronizationContext.Current;
-            _vidManager.Disposed += (s, arg) => uiThread.Post(d =>
+            EventHandler onDisposed = (s, arg) => uiThread.Post(d =>
             {
                 btnHighlight.Enabled = true;
                 _vidManager = null;
             }, null);
+
+            if (!_vidManager.IsDisposing)
+                _vidManager.Disposed += onDisposed;
+            else //call it manually if it was disposed before we could register the eventhandler
+                onDisposed(this, EventArgs.Empty);
         }
 
         private void txtBoxTwitchUsername_KeyPress(object sender, KeyPressEventArgs e)
