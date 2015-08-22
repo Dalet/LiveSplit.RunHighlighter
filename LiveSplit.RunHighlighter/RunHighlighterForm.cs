@@ -1,6 +1,6 @@
-﻿using System;
+﻿using LiveSplit.Model;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
@@ -11,7 +11,8 @@ namespace LiveSplit.RunHighlighter
     public partial class RunHighlighterForm : Form
     {
         private RunHighlighterSettings _settings;
-        private IList<RunHistory.Item> _runs;
+        private IList<RunHistory.Run> _runs;
+        private IRun _splits;
 
         private dynamic _video;
         private HighlightInfo _highlightInfo;
@@ -20,7 +21,7 @@ namespace LiveSplit.RunHighlighter
         private int? _lastSearchTimestamp;
         private int _lastRunSearched;
 
-        public RunHighlighterForm(RunHighlighterSettings settings)
+        public RunHighlighterForm(IRun splits, RunHighlighterSettings settings)
         {
             InitializeComponent();
 
@@ -33,6 +34,7 @@ namespace LiveSplit.RunHighlighter
             this._lastSearchTimestamp = null;
             this._lastRunSearched = -1;
             this._settings = settings;
+            this._splits = splits;
 
             var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.Text += " v" + ver.ToString(2) + (ver.Build > 0 ? "." + ver.Build : "");
@@ -48,32 +50,19 @@ namespace LiveSplit.RunHighlighter
                 }
             };
 
-            this.Load += (s, e) =>
-                {
-                    var uiThread = SynchronizationContext.Current;
-                    System.Threading.Tasks.Task.Factory.StartNew(() =>
-                    {
-                        DialogResult result = DialogResult.Retry;
-                        while ((_runs = RunHistory.GetRunHistory()) == null && result == DialogResult.Retry)
-                        {
-                            uiThread.Send(d => result = MessageBox.Show(this, RunHistory.LastException.Message, "Reading the history file failed", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error), null);
-                        }
-
-                        if (result == DialogResult.Cancel)
-                            uiThread.Send(d => this.Close(), null);
-
-                        Debug.WriteLine("Run History length: " + _runs.Count);
-
-                        uiThread.Send(d => PopulateListbox(_runs), null);
-                    });
-
-                    if (Twitch.IsValidUsername(_settings.TwitchUsername))
-                        this.txtBoxTwitchUsername.Text = _settings.TwitchUsername;
-                    else if (Twitch.Instance.IsLoggedIn)
-                        this.txtBoxTwitchUsername.Text = Twitch.Instance.ChannelName;
-                };
-
+            this.Load += RunHighlighterForm_Load;
             this.FormClosed += Form_OnClose;
+        }
+
+        private void RunHighlighterForm_Load(object sender, EventArgs e)
+        {
+            _runs = RunHistory.GetRunHistory(_splits, _settings.MaxRunHistoryLength);
+            PopulateListbox(_runs);
+
+            if (Twitch.IsValidUsername(_settings.TwitchUsername))
+                this.txtBoxTwitchUsername.Text = _settings.TwitchUsername;
+            else if (Twitch.Instance.IsLoggedIn)
+                this.txtBoxTwitchUsername.Text = Twitch.Instance.ChannelName;
         }
 
         void Form_OnClose(object sender, EventArgs e)
@@ -82,11 +71,10 @@ namespace LiveSplit.RunHighlighter
                 _settings.TwitchUsername = txtBoxTwitchUsername.Text;
         }
 
-        void PopulateListbox(IList<RunHistory.Item> runs)
+        void PopulateListbox(IList<RunHistory.Run> runs)
         {
             lstRunHistory.Items.Clear();
             lstRunHistory.Enabled = true;
-
             if (runs == null || runs.Count <= 0)
             {
                 var message = runs != null ? "(empty)" : "(retrieving the history failed)";
@@ -98,7 +86,7 @@ namespace LiveSplit.RunHighlighter
                 lstRunHistory.Items.AddRange(RunHistoryToString(runs).ToArray());
         }
 
-        static IList<string> RunHistoryToString(IEnumerable<RunHistory.Item> runs)
+        static IList<string> RunHistoryToString(IEnumerable<RunHistory.Run> runs)
         {
             var runHistory = new List<string>();
             Func<string, string, int, string> AppendString = (src, c, number) =>
@@ -141,7 +129,7 @@ namespace LiveSplit.RunHighlighter
             tlpVideo.Enabled = false;
         }
 
-        bool ProcessHighlight(RunHistory.Item run)
+        bool ProcessHighlight(RunHistory.Run run)
         {
             if (!Twitch.IsValidUsername(txtBoxTwitchUsername.Text))
             {
@@ -205,7 +193,7 @@ namespace LiveSplit.RunHighlighter
             return true;
         }
 
-        dynamic SearchVideo(RunHistory.Item run)
+        dynamic SearchVideo(RunHistory.Run run)
         {
             var requestDelay = TimeSpan.FromMilliseconds(1000);
 

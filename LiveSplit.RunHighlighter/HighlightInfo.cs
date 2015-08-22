@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Twitch = LiveSplit.RunHighlighter.TwitchExtension;
 
 namespace LiveSplit.RunHighlighter
 {
     public class HighlightInfo
     {
-        public RunHistory.Item Run { get; private set; }
+        public RunHistory.Run Run { get; private set; }
         public dynamic Video { get; private set; }
         public bool IsStartOutOfVideo { get; private set; }
         public bool IsEndOutOfVideo { get; private set; }
@@ -68,7 +65,7 @@ namespace LiveSplit.RunHighlighter
         private TimeSpan _startTime;
         private TimeSpan _endTime;
 
-        public HighlightInfo(dynamic video, RunHistory.Item run, RunHighlighterSettings settings = null)
+        public HighlightInfo(dynamic video, RunHistory.Run run, RunHighlighterSettings settings = null)
         {
             this._settings = settings;
             this.Video = video;
