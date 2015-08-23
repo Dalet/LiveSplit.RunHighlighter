@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace LiveSplit.RunHighlighter
 {
-    public class RunHistory
+    public static class RunHistory
     {
         public class Run
         {
@@ -22,7 +22,11 @@ namespace LiveSplit.RunHighlighter
                 get
                 {
                     var formatter = new TimeFormatters.RegularTimeFormatter(TimeFormatters.TimeAccuracy.Seconds);
-                    return formatter.Format(Time.GameTime) + " / " + formatter.Format(Time.RealTime);
+                    var gt = Time.RealTime != Time.GameTime
+                        ? formatter.Format(Time.GameTime) + " / "
+                        : "";
+                    var rt = formatter.Format(Time.RealTime);
+                    return gt + rt;
                 }
             }
 
@@ -93,6 +97,35 @@ namespace LiveSplit.RunHighlighter
             }
 
             return history;
+        }
+
+        public static IList<string> HistoryToString(IEnumerable<Run> runs)
+        {
+            var runHistory = new List<string>();
+            Func<string, string, int, string> AppendString = (src, c, number) =>
+            {
+                for (int i = 0; number > i; i++)
+                    src += c;
+                return src;
+            };
+
+            char[] oneSpaceWideChars = new char[] { ':', ' ' };
+            int oneSpaceWideCharsMax = runs.Max(r => r.TimeString.Count(c => oneSpaceWideChars.Contains(c)));
+            int twoSpacesWideCharsMax = runs.Max(r => r.TimeString.Count(c => !oneSpaceWideChars.Contains(c)));
+
+            foreach (var run in runs)
+            {
+                var timeDesc = run.TimeString;
+
+                var timeDescSpaces = AppendString("", " ", oneSpaceWideCharsMax - timeDesc.Count(c => oneSpaceWideChars.Contains(c)));
+                timeDescSpaces = AppendString(timeDescSpaces, "  ", twoSpacesWideCharsMax - timeDesc.Count(c => !oneSpaceWideChars.Contains(c)));
+
+                var runDesc = timeDescSpaces + timeDesc + "  -  " + run.TimeElapsedString;
+
+                runHistory.Add(runDesc);
+            }
+
+            return runHistory;
         }
     }
 }

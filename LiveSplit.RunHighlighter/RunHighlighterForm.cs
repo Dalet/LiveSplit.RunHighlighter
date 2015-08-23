@@ -83,35 +83,7 @@ namespace LiveSplit.RunHighlighter
                 txtBoxTwitchUsername.Enabled = false;
             }
             else
-                lstRunHistory.Items.AddRange(RunHistoryToString(runs).ToArray());
-        }
-
-        static IList<string> RunHistoryToString(IEnumerable<RunHistory.Run> runs)
-        {
-            var runHistory = new List<string>();
-            Func<string, string, int, string> AppendString = (src, c, number) =>
-            {
-                for (int i = 0; number > i; i++)
-                    src += c;
-                return src;
-            };
-
-            int maxSemiColumn = runs.Max(r => r.TimeString.Count(c => c == ':'));
-            int maxNumbers = runs.Max(r => r.TimeString.Count(c => c != ':'));
-
-            foreach (var run in runs)
-            {
-                var timeDesc = run.TimeString;
-
-                var timeDescSpaces = AppendString("", " ", maxSemiColumn - timeDesc.Count(c => c == ':'));
-                timeDescSpaces = AppendString(timeDescSpaces, "  ", maxNumbers - timeDesc.Count(c => c != ':'));
-
-                var runDesc = timeDescSpaces + timeDesc + "  -  " + run.TimeElapsedString + "  -  " + run.Game;
-
-                runHistory.Add(runDesc);
-            }
-
-            return runHistory;
+                lstRunHistory.Items.AddRange(RunHistory.HistoryToString(runs).ToArray());
         }
 
         void ResetTlpVideo()

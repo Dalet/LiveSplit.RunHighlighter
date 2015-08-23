@@ -272,7 +272,7 @@
             this.gbRunHistory.Size = new System.Drawing.Size(278, 92);
             this.gbRunHistory.TabIndex = 3;
             this.gbRunHistory.TabStop = false;
-            this.gbRunHistory.Text = "Run History";
+            this.gbRunHistory.Text = "Run History for Current Splits";
             // 
             // tlpRunHistory
             // 
