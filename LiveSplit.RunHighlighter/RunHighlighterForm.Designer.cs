@@ -99,7 +99,7 @@
             this.txtBoxTwitchUsername.Location = new System.Drawing.Point(100, 4);
             this.txtBoxTwitchUsername.Name = "txtBoxTwitchUsername";
             this.txtBoxTwitchUsername.Size = new System.Drawing.Size(181, 20);
-            this.txtBoxTwitchUsername.TabIndex = 1;
+            this.txtBoxTwitchUsername.TabIndex = 0;
             this.txtBoxTwitchUsername.TextChanged += new System.EventHandler(this.txtBoxTwitchUsername_TextChanged);
             this.txtBoxTwitchUsername.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtBoxTwitchUsername_KeyPress);
             // 
@@ -271,7 +271,7 @@
             this.gbRunHistory.Location = new System.Drawing.Point(3, 32);
             this.gbRunHistory.Name = "gbRunHistory";
             this.gbRunHistory.Size = new System.Drawing.Size(278, 92);
-            this.gbRunHistory.TabIndex = 3;
+            this.gbRunHistory.TabIndex = 2;
             this.gbRunHistory.TabStop = false;
             this.gbRunHistory.Text = "Run History for Current Splits";
             // 
@@ -305,7 +305,7 @@
             this.lstRunHistory.Location = new System.Drawing.Point(3, 3);
             this.lstRunHistory.Name = "lstRunHistory";
             this.lstRunHistory.Size = new System.Drawing.Size(266, 67);
-            this.lstRunHistory.TabIndex = 0;
+            this.lstRunHistory.TabIndex = 2;
             this.lstRunHistory.SelectedIndexChanged += new System.EventHandler(this.lstRunHistory_SelectedIndexChanged);
             // 
             // tooltipOutOfVid

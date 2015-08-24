@@ -103,7 +103,7 @@ namespace LiveSplit.RunHighlighter
 
             while (match.Success)
             {
-                if (Run.Time.GameTime.Value != Run.Time.RealTime.Value)
+                if (Run.Time.GameTime != null && Run.Time.GameTime.Value != Run.Time.RealTime.Value)
                 {
                     raw = raw.Replace("[RT!=GT]", "");
                     raw = raw.Replace("[/RT!=GT]", "");
@@ -125,10 +125,15 @@ namespace LiveSplit.RunHighlighter
             else if (Twitch.Instance.IsLoggedIn)
                 twitchName = Twitch.Instance.ChannelName;
 
+            var rtStr = HighlightTimeString(Run.Time.RealTime.Value, TruncateTimes);
+            var gtStr = Run.Time.GameTime != null
+                ? HighlightTimeString(Run.Time.GameTime.Value, TruncateTimes)
+                : rtStr;
+
             var keywords = new Dictionary<string, string>
             {
-                {"$realtime", HighlightTimeString(Run.Time.RealTime.Value, TruncateTimes)},
-                {"$gametime", HighlightTimeString(Run.Time.GameTime.Value, TruncateTimes)},
+                {"$realtime", rtStr},
+                {"$gametime", gtStr},
                 {"$twitchchannel", twitchName},
                 {"$game", Run.Game},
                 {"$category", Run.Category}

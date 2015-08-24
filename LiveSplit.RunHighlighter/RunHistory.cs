@@ -22,7 +22,7 @@ namespace LiveSplit.RunHighlighter
                 get
                 {
                     var formatter = new TimeFormatters.RegularTimeFormatter(TimeFormatters.TimeAccuracy.Seconds);
-                    var gt = Time.RealTime != Time.GameTime
+                    var gt = Time.GameTime != null && Time.RealTime != Time.GameTime
                         ? formatter.Format(Time.GameTime) + " / "
                         : "";
                     var rt = formatter.Format(Time.RealTime);
