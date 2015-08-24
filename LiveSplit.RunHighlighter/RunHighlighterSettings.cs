@@ -15,12 +15,14 @@ namespace LiveSplit.RunHighlighter
         public string TitleText { get; set; }
         public string DescriptionText { get; set; }
         public bool TruncateTimes { get; set; }
+        public bool HideUnreliableHistory { get; set; }
 
         public const int DEFAULT_HIGHLIGHT_BUFFER = 7;
         public const int DEFAULT_MAX_HISTORY_LENGTH = 50;
         public const string DEFAULT_TITLE_TEXT = "$game $category speedrun in $gametime[RT!=GT] ($realtime RTA)[/RT!=GT]";
         public const string DEFAULT_DESCRIPTION_TEXT = "";
         public const bool DEFAULT_TRUNCATE_TIMES = false;
+        public const bool DEFAULT_HIDE_UNRELIABLE_HISTORY = false;
         private const string DEFAULT_TWITCH_USERNAME = "";
 
         public RunHighlighterSettings()
@@ -32,6 +34,7 @@ namespace LiveSplit.RunHighlighter
             this.rbTruncateTimes.DataBindings.Add("Checked", this, "TruncateTimes", false, DataSourceUpdateMode.OnPropertyChanged);
             this.numLeeway.DataBindings.Add("Value", this, "HighlightBuffer", false, DataSourceUpdateMode.OnPropertyChanged);
             this.numMaxHistoryLength.DataBindings.Add("Value", this, "MaxRunHistoryLength", false, DataSourceUpdateMode.OnPropertyChanged);
+            this.checkBox1.DataBindings.Add("Checked", this, "HideUnreliableHistory", false, DataSourceUpdateMode.OnPropertyChanged);
 
             // defaults
             this.HighlightBuffer = DEFAULT_HIGHLIGHT_BUFFER;
@@ -40,6 +43,7 @@ namespace LiveSplit.RunHighlighter
             this.TitleText = DEFAULT_TITLE_TEXT;
             this.DescriptionText = DEFAULT_DESCRIPTION_TEXT;
             this.TruncateTimes = DEFAULT_TRUNCATE_TIMES;
+            this.HideUnreliableHistory = DEFAULT_HIDE_UNRELIABLE_HISTORY;
         }
 
 
@@ -54,6 +58,7 @@ namespace LiveSplit.RunHighlighter
             settingsNode.AppendChild(SettingsHelper.ToElement(doc, "TitleText", TitleText));
             settingsNode.AppendChild(SettingsHelper.ToElement(doc, "DescriptionText", DescriptionText));
             settingsNode.AppendChild(SettingsHelper.ToElement(doc, "TruncateTimes", TruncateTimes));
+            settingsNode.AppendChild(SettingsHelper.ToElement(doc, "HideUnreliableHistory", HideUnreliableHistory));
 
             return settingsNode;
         }
@@ -68,6 +73,7 @@ namespace LiveSplit.RunHighlighter
             this.DescriptionText = SettingsHelper.ParseString(settings["DescriptionText"], DEFAULT_DESCRIPTION_TEXT);
             this.TruncateTimes = SettingsHelper.ParseBool(settings["TruncateTimes"], DEFAULT_TRUNCATE_TIMES);
             this.MaxRunHistoryLength = SettingsHelper.ParseInt(settings["MaxRunHistoryLength"], DEFAULT_MAX_HISTORY_LENGTH);
+            this.HideUnreliableHistory = SettingsHelper.ParseBool(settings["HideUnreliableHistory"], DEFAULT_HIDE_UNRELIABLE_HISTORY);
 
             if (MaxRunHistoryLength < numMaxHistoryLength.Minimum)
                 MaxRunHistoryLength = DEFAULT_MAX_HISTORY_LENGTH;

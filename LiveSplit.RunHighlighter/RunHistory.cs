@@ -73,8 +73,10 @@ namespace LiveSplit.RunHighlighter
             {
                 return new Run
                 {
-                    UtcStart = attempt.Started.Value.ToUniversalTime(),
-                    UtcEnd = attempt.Ended.Value.ToUniversalTime(),
+                    UtcStart = attempt.Started.Value.Time.ToUniversalTime(),
+                    UtcEnd = attempt.Ended.Value.Time.ToUniversalTime(),
+                    IsUtcStartReliable = attempt.Started.Value.SyncedWithAtomicClock,
+                    IsUtcEndReliable = attempt.Ended.Value.SyncedWithAtomicClock,
                     Time = attempt.Time,
                     Game = splits.GameName,
                     Category = splits.CategoryName
@@ -82,9 +84,12 @@ namespace LiveSplit.RunHighlighter
             }
         }
 
-        public static IList<Run> GetRunHistory(IRun splits, int maxCount = -1)
+        public static IList<Run> GetRunHistory(IRun splits, int maxCount = -1, bool hideUnreliable = false)
         {
-            var attemptHistory = splits.AttemptHistory.Where(a => a.Started != null && a.Ended != null && a.Time.RealTime != null).ToArray();
+            var attemptHistory = splits.AttemptHistory
+                .Where(a => a.Started != null && a.Ended != null && a.Time.RealTime != null &&
+                    (!hideUnreliable || (a.Started.Value.SyncedWithAtomicClock && a.Ended.Value.SyncedWithAtomicClock)))
+                .ToArray();
             var history = new List<Run>();
 
             int i = attemptHistory.Length;

@@ -56,7 +56,7 @@ namespace LiveSplit.RunHighlighter
 
         private void RunHighlighterForm_Load(object sender, EventArgs e)
         {
-            _runs = RunHistory.GetRunHistory(_splits, _settings.MaxRunHistoryLength);
+            _runs = RunHistory.GetRunHistory(_splits, _settings.MaxRunHistoryLength, _settings.HideUnreliableHistory);
             PopulateListbox(_runs);
 
             if (Twitch.IsValidUsername(_settings.TwitchUsername))
