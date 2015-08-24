@@ -103,7 +103,7 @@ namespace LiveSplit.RunHighlighter
 @"Variables:
 
 $realtime = Real Time of the run. Exemple: '1:48:54'
-$gametime = Game Time of the run. Exemple: '1:40:03'
+$gametime = Game Time of the run. If irrelevant, it will simply display Real Time.
 $game = Game name
 $category = Run category
 $twitchchannel = Twitch channel where the video comes from.
