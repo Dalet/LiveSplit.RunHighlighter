@@ -15,15 +15,12 @@ Installation
 2. Close LiveSplit if it was open and place `LiveSplit.RunHighlighter.dll` in the `Components` **directory** of LiveSplit.
 3. Start LiveSplit and add **Run Highlighter** to your LiveSplit **layout**. It is in the "**Other**" category.
 
-**Note:** if the component isn't in the layout during a run, this run won't be highlightable.
-
 How to use
 ----------
-1. Leave the component in your layout. Every completed run will be added to your history, which you will be able to highlight at any time.
-2. When you want to highlight runs, right click LiveSplit's window -> Control -> Run Highlighter...
-3. Enter the Twitch channel where the run was streamed and click on the run you want to highlight in the list.  
-4. If the run is found in one of the VODs, a link to the VOD and the time range to highlight will appear.
-5. Click the "Open Highlighter..." button to open the Video Manager. If you have to log in first, you might need to close the window and reopen it before it automatically fills everything.
+1. Right click LiveSplit's window -> Control -> Run Highlighter...
+2. Enter the Twitch channel where the run was streamed and click on the run you want to highlight in the list.  
+3. If the run is found in one of the VODs, a link to the VOD and the time range to highlight will appear.
+4. Click the "Open Highlighter..." button to open the Video Manager. If you have to log in first, you might need to close the window and reopen it before it automatically fills everything.
 
 Settings
 --------
@@ -36,7 +33,7 @@ Requirements
 ------------
 * Internet Explorer (version 11+ is recommended)
 * .NET 4.5 (Windows Vista or later)
-* [LiveSplit](http://livesplit.org/) 1.5 or later
+* [LiveSplit](http://livesplit.org/) 1.6 or later
 
 Credits
 -------
