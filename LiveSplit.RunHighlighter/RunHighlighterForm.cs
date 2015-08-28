@@ -86,7 +86,7 @@ namespace LiveSplit.RunHighlighter
                 lstRunHistory.Items.AddRange(RunHistory.HistoryToString(runs).ToArray());
         }
 
-        bool ProcessHighlight(RunHistory.Run run)
+        bool GetHighlightInfo(RunHistory.Run run)
         {
             var channel = txtBoxTwitchUsername.Text;
 
@@ -192,7 +192,7 @@ namespace LiveSplit.RunHighlighter
                 return;
 
             if (lstRunHistory.SelectedIndex >= 0 && _lastRunSearched != lstRunHistory.SelectedIndex)
-                ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
+                GetHighlightInfo(_runs[lstRunHistory.SelectedIndex]);
         }
 
         private void btnHighlight_Click(object sender, EventArgs e)
