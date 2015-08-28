@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using Twitch = LiveSplit.RunHighlighter.TwitchExtension;
 
@@ -40,16 +41,6 @@ namespace LiveSplit.RunHighlighter
             this.Text += " v" + ver.ToString(2) + (ver.Build > 0 ? "." + ver.Build : "");
             lstRunHistory.Items.Clear(); //clear items added as exemples in the Designer
 
-            //make impossible to select another run while the video manager is open
-            lstRunHistory.GotFocus += (s, e) =>
-            {
-                if (_vidManager != null)
-                {
-                    lstRunHistory.Parent.Focus();
-                    MessageBox.Show(this, "Close the Internet Explorer window before selecting another run.", "Run Highlighter");
-                }
-            };
-
             this.Load += RunHighlighterForm_Load;
             this.FormClosed += Form_OnClose;
         }
@@ -86,7 +77,7 @@ namespace LiveSplit.RunHighlighter
                 lstRunHistory.Items.AddRange(RunHistory.HistoryToString(runs).ToArray());
         }
 
-        bool GetHighlightInfo(RunHistory.Run run)
+        async void GetHighlightInfo(RunHistory.Run run)
         {
             var channel = txtBoxTwitchUsername.Text;
 
@@ -94,36 +85,41 @@ namespace LiveSplit.RunHighlighter
             {
                 MessageBox.Show(this, "Invalid Twitch username.", "Run Highlighter", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtBoxTwitchUsername.Focus();
-                return false;
+                return;
             }
 
             _highlightInfo = null;
             txtBoxVidUrl.Text = "Searching...";
-            _lastRunSearched = lstRunHistory.SelectedIndex;
-
+            lstRunHistory.Enabled = txtBoxTwitchUsername.Enabled = false;
             ResetTlpVideo();
-            tlpVideo.Refresh();
+            _lastRunSearched = lstRunHistory.SelectedIndex;
 
             var requestDelay = TimeSpan.FromMilliseconds(1000);
             var timeSinceLastSearch = _lastSearchTimestamp != null
                 ? TimeSpan.FromMilliseconds(Environment.TickCount - (double)_lastSearchTimestamp)
                 : requestDelay;
-            if (timeSinceLastSearch < requestDelay) //avoid spamming api requests
-                Thread.Sleep(requestDelay - timeSinceLastSearch);
 
-            _video = Twitch.Instance.SearchRunBroadcast(channel, run);
-            _lastSearchTimestamp = Environment.TickCount;
+            await Task.Run(() =>
+            {
+                if (timeSinceLastSearch < requestDelay) //avoid spamming api requests
+                    Thread.Sleep(requestDelay - timeSinceLastSearch);
+
+                _lastSearchTimestamp = Environment.TickCount;
+                _video = Twitch.Instance.SearchRunBroadcast(channel, run);
+            });
 
             if (_video == null)
             {
                 txtBoxVidUrl.Text = "No video found";
                 _lastRunSearched = -1;
-                return false;
+            }
+            else
+            {
+                _highlightInfo = new HighlightInfo(_video, run, _settings);
+                UpdateVideoGroupBox(_highlightInfo);
             }
 
-            _highlightInfo = new HighlightInfo(_video, run, _settings);
-            UpdateVideoGroupBox(_highlightInfo);
-            return true;
+            lstRunHistory.Enabled = txtBoxTwitchUsername.Enabled = true;
         }
 
         void UpdateVideoGroupBox(HighlightInfo info)
@@ -205,13 +201,13 @@ namespace LiveSplit.RunHighlighter
                     return;
             }
 
-            btnHighlight.Enabled = false;
+            btnHighlight.Enabled = lstRunHistory.Enabled = false;
             _vidManager = new VideoManager(_settings, _highlightInfo, automated);
 
             var uiThread = SynchronizationContext.Current;
             EventHandler onDisposed = (s, arg) => uiThread.Post(d =>
             {
-                btnHighlight.Enabled = true;
+                btnHighlight.Enabled = lstRunHistory.Enabled = true;
                 _vidManager = null;
             }, null);
 
