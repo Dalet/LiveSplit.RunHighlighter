@@ -1,6 +1,7 @@
 ﻿using LiveSplit.Web.Share;
 using System;
 using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace LiveSplit.RunHighlighter
 {
@@ -17,6 +18,53 @@ namespace LiveSplit.RunHighlighter
         public dynamic GetStream(string username)
         {
             return curl(String.Format("streams/{0}", username));
+        }
+
+        public dynamic SearchRunBroadcast(string channel, RunHistory.Run run)
+        {
+            try
+            {
+                dynamic videos;
+                if ((videos = Instance.GetPastBroadcasts(channel)) == null)
+                    return null;
+
+                dynamic streamInfo = Instance.GetStream(channel);
+
+                int i = 0;
+                foreach (dynamic video in videos)
+                {
+                    video.length = (double)video.length; //length is of decimal type sometimes
+
+                    DateTime videoStart = ParseDate(video.recorded_at);
+                    DateTime videoEnd = videoStart.Add(TimeSpan.FromSeconds(video.length));
+                    video.stream = streamInfo.stream; // null if stream is offline
+                    video.latest_video = i == 0;
+                    video.is_incomplete = video.status == "recording" || (video.latest_video && video.stream != null);
+
+                    if (videoStart <= run.UtcStart + TimeSpan.FromSeconds(12)
+                        && (run.UtcEnd - TimeSpan.FromSeconds(12) <= videoEnd || video.is_incomplete))
+                    {
+                        return video;
+                    }
+
+                    i++;
+                }
+            }
+            catch (Exception e)
+            {
+                string message = String.Empty;
+
+                if (e is System.Net.WebException)
+                {
+                    message = "An error occured while trying to reach Twitch's API.";
+                }
+                else
+                    message = "An unexpected error occured while trying to retrieve the video.";
+
+                MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+
+            return null;
         }
 
         public static DateTime ParseDate(string d)

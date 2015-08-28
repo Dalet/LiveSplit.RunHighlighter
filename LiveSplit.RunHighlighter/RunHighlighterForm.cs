@@ -88,7 +88,9 @@ namespace LiveSplit.RunHighlighter
 
         bool ProcessHighlight(RunHistory.Run run)
         {
-            if (!Twitch.IsValidUsername(txtBoxTwitchUsername.Text))
+            var channel = txtBoxTwitchUsername.Text;
+
+            if (!Twitch.IsValidUsername(channel))
             {
                 MessageBox.Show(this, "Invalid Twitch username.", "Run Highlighter", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtBoxTwitchUsername.Focus();
@@ -102,7 +104,17 @@ namespace LiveSplit.RunHighlighter
             ResetTlpVideo();
             tlpVideo.Refresh();
 
-            if ((_video = SearchVideo(run)) == null)
+            var requestDelay = TimeSpan.FromMilliseconds(1000);
+            var timeSinceLastSearch = _lastSearchTimestamp != null
+                ? TimeSpan.FromMilliseconds(Environment.TickCount - (double)_lastSearchTimestamp)
+                : requestDelay;
+            if (timeSinceLastSearch < requestDelay) //avoid spamming api requests
+                Thread.Sleep(requestDelay - timeSinceLastSearch);
+
+            _video = Twitch.Instance.SearchRunBroadcast(channel, run);
+            _lastSearchTimestamp = Environment.TickCount;
+
+            if (_video == null)
             {
                 txtBoxVidUrl.Text = "No video found";
                 _lastRunSearched = -1;
@@ -112,63 +124,6 @@ namespace LiveSplit.RunHighlighter
             _highlightInfo = new HighlightInfo(_video, run, _settings);
             UpdateVideoGroupBox(_highlightInfo);
             return true;
-        }
-
-        dynamic SearchVideo(RunHistory.Run run)
-        {
-            var requestDelay = TimeSpan.FromMilliseconds(1000);
-
-            var timeSinceLastSearch = _lastSearchTimestamp != null
-                ? TimeSpan.FromMilliseconds(Environment.TickCount - (double)_lastSearchTimestamp)
-                : requestDelay;
-
-            if (timeSinceLastSearch < requestDelay) //avoid spamming api requests
-                Thread.Sleep(requestDelay - timeSinceLastSearch);
-
-            try
-            {
-                dynamic videos;
-                if ((videos = Twitch.Instance.GetPastBroadcasts(txtBoxTwitchUsername.Text)) != null)
-                {
-                    dynamic streamInfo = Twitch.Instance.GetStream(txtBoxTwitchUsername.Text);
-                    _lastSearchTimestamp = Environment.TickCount;
-
-                    int i = 0;
-                    foreach (dynamic video in videos)
-                    {
-                        video.length = (double)video.length; //length is of decimal type sometimes
-
-                        DateTime videoStart = Twitch.ParseDate(video.recorded_at);
-                        DateTime videoEnd = videoStart.Add(TimeSpan.FromSeconds(video.length));
-                        video.stream = streamInfo.stream; // null if stream is offline
-                        video.latest_video = i == 0;
-                        video.is_incomplete = video.status == "recording" || (video.latest_video && video.stream != null);
-
-                        if (videoStart <= run.UtcStart + TimeSpan.FromSeconds(12)
-                            && (run.UtcEnd - TimeSpan.FromSeconds(12) <= videoEnd || video.is_incomplete))
-                        {
-                            return video;
-                        }
-
-                        i++;
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                string message = String.Empty;
-
-                if (e is System.Net.WebException)
-                {
-                    message = "An error occured while trying to reach Twitch's API.";
-                }
-                else
-                    message = "An unexpected error occured while trying to retrieve the video.";
-
-                MessageBox.Show(this, message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-
-            return null;
         }
 
         void UpdateVideoGroupBox(HighlightInfo info)
@@ -236,11 +191,7 @@ namespace LiveSplit.RunHighlighter
             if (_runs == null || _runs.Count <= 0)
                 return;
 
-            var timeSinceLastSearch = _lastSearchTimestamp != null
-                ? TimeSpan.FromMilliseconds(Environment.TickCount - (double)_lastSearchTimestamp)
-                : TimeSpan.FromHours(42);
-
-            if (timeSinceLastSearch > TimeSpan.FromSeconds(0.1) && lstRunHistory.SelectedIndex >= 0 && _lastRunSearched != lstRunHistory.SelectedIndex)
+            if (lstRunHistory.SelectedIndex >= 0 && _lastRunSearched != lstRunHistory.SelectedIndex)
                 ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
         }
 
