@@ -7,31 +7,22 @@ namespace LiveSplit.RunHighlighter
 {
     public class HighlightInfo
     {
+        public TimeSpan Buffer { get; set; }
+        public bool TruncateTimes { get; set; }
+        public string RawTitle { get; set; }
+        public string RawDescription { get; set; }
+
         public RunHistory.Run Run { get; private set; }
         public dynamic Video { get; private set; }
         public bool IsStartOutOfVideo { get; private set; }
         public bool IsEndOutOfVideo { get; private set; }
-        public TimeSpan Buffer { get; set; }
-        public bool TruncateTimes { get; set; }
-        public string Title { get { return FormatText(RawTitle); } }
-        public string Description { get { return FormatText(RawDescription); } }
-        public string RawTitle { get; set; }
-        public string RawDescription { get; set; }
-
-        public bool IsOutOfVideo
-        {
-            get { return IsStartOutOfVideo || IsEndOutOfVideo; }
-        }
-
-        public string ManagerURL
-        {
-            get { return String.Format("twitch.tv/{0}/manager/{1}/highlight", Video.channel.name, Video._id); }
-        }
-
-        public Uri ManagerURI
-        {
-            get { return new Uri("http://" + ManagerURL); }
-        }
+        public bool IsOutOfVideo => IsStartOutOfVideo || IsEndOutOfVideo;
+        public string Title => FormatText(RawTitle);
+        public string Description => FormatText(RawDescription);
+        public string ManagerURL => String.Format("twitch.tv/{0}/manager/{1}/highlight", Video.channel.name, Video._id);
+        public Uri ManagerURI => new Uri("http://" + ManagerURL);
+        public string StartTimeString => HighlightTimeString(StartTime);
+        public string EndTimeString => HighlightTimeString(EndTime);
 
         public TimeSpan StartTime
         {
@@ -49,16 +40,6 @@ namespace LiveSplit.RunHighlighter
                 var time = _endTime + Buffer;
                 return (!Video.is_incomplete && (int)time.TotalSeconds > Video.length) ? TimeSpan.FromSeconds(Video.length) : time;
             }
-        }
-
-        public string StartTimeString
-        {
-            get { return HighlightTimeString(StartTime); }
-        }
-
-        public string EndTimeString
-        {
-            get { return HighlightTimeString(EndTime); }
         }
 
         private RunHighlighterSettings _settings;
