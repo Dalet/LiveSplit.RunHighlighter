@@ -129,7 +129,7 @@ namespace LiveSplit.RunHighlighter
             tlpVideo.Enabled = true;
 
             var outOfVidTooltip = "The recording is still being processed according to Twitch's API.\nThis time might be out of the video's range until the recording is complete.";
-            var unreliableTooltip = "This time could be incorrect. Checking it is highly recommended.\nThis is due to a failure to synchronize with the NIST time server during the run.";
+            var unreliableTooltip = "This time could be incorrect. Checking it is highly recommended.\nThis is due to a failure to synchronize with the internet clock during the run.";
 
             txtBoxStartTime.Text = _highlightInfo.StartTimeString;
             if (_highlightInfo.IsStartOutOfVideo)
