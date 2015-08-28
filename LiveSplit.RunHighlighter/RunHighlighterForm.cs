@@ -38,7 +38,7 @@ namespace LiveSplit.RunHighlighter
 
             var ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
             this.Text += " v" + ver.ToString(2) + (ver.Build > 0 ? "." + ver.Build : "");
-            lstRunHistory.Items.Clear();
+            lstRunHistory.Items.Clear(); //clear items added as exemples in the Designer
 
             //make impossible to select another run while the video manager is open
             lstRunHistory.GotFocus += (s, e) =>
@@ -86,21 +86,6 @@ namespace LiveSplit.RunHighlighter
                 lstRunHistory.Items.AddRange(RunHistory.HistoryToString(runs).ToArray());
         }
 
-        void ResetTlpVideo()
-        {
-            txtBoxStartTime.Text = txtBoxEndTime.Text = String.Empty;
-            txtBoxEndTime.ForeColor = txtBoxStartTime.ForeColor = System.Drawing.SystemColors.WindowText;
-            txtBoxEndTime.BackColor = txtBoxStartTime.BackColor = System.Drawing.SystemColors.Control;
-            tooltipOutOfVid.SetToolTip(txtBoxStartTime, "");
-            tooltipOutOfVid.SetToolTip(txtBoxEndTime, "");
-            toolTipUnreliableTime.SetToolTip(txtBoxStartTime, "");
-            toolTipUnreliableTime.SetToolTip(txtBoxEndTime, "");
-            picStartTime.Image = picEndTime.Image = null;
-            chkAutomateHighlight.Enabled = true;
-            chkAutomateHighlight.Checked = false;
-            tlpVideo.Enabled = false;
-        }
-
         bool ProcessHighlight(RunHistory.Run run)
         {
             if (!Twitch.IsValidUsername(txtBoxTwitchUsername.Text))
@@ -125,43 +110,7 @@ namespace LiveSplit.RunHighlighter
             }
 
             _highlightInfo = new HighlightInfo(_video, run, _settings);
-            txtBoxVidUrl.Text = _video.url;
-            tlpVideo.Enabled = true;
-
-            var outOfVidTooltip = "The recording is still being processed according to Twitch's API.\nThis time might be out of the video's range until the recording is complete.";
-            var unreliableTooltip = "This time could be incorrect. Checking it is highly recommended.\nThis is due to a failure to synchronize with the internet clock during the run.";
-
-            txtBoxStartTime.Text = _highlightInfo.StartTimeString;
-            if (_highlightInfo.IsStartOutOfVideo)
-            {
-                txtBoxStartTime.ForeColor = System.Drawing.Color.Red;
-                tooltipOutOfVid.SetToolTip(txtBoxStartTime, outOfVidTooltip);
-            }
-
-            if (!run.IsUtcStartReliable)
-            {
-                txtBoxStartTime.BackColor = System.Drawing.Color.PaleGoldenrod;
-                picStartTime.Image = Properties.Resources.warning;
-                toolTipUnreliableTime.SetToolTip(picStartTime, unreliableTooltip);
-            }
-
-            txtBoxEndTime.Text = _highlightInfo.EndTimeString;
-            if (_highlightInfo.IsEndOutOfVideo)
-            {
-                tooltipOutOfVid.SetToolTip(txtBoxEndTime, outOfVidTooltip);
-                txtBoxEndTime.ForeColor = System.Drawing.Color.Red;
-            }
-
-            if (!run.IsUtcEndReliable)
-            {
-                txtBoxEndTime.BackColor = System.Drawing.Color.PaleGoldenrod;
-                picEndTime.Image = Properties.Resources.warning;
-                toolTipUnreliableTime.SetToolTip(picEndTime, unreliableTooltip);
-            }
-
-            if (_highlightInfo.IsOutOfVideo || !run.IsUtcStartReliable || !run.IsUtcEndReliable)
-                chkAutomateHighlight.Enabled = chkAutomateHighlight.Checked = false;
-
+            UpdateVideoGroupBox(_highlightInfo);
             return true;
         }
 
@@ -222,6 +171,66 @@ namespace LiveSplit.RunHighlighter
             return null;
         }
 
+        void UpdateVideoGroupBox(HighlightInfo info)
+        {
+            txtBoxVidUrl.Text = info.Video.url;
+            tlpVideo.Enabled = true;
+            txtBoxStartTime.Text = info.StartTimeString;
+            txtBoxEndTime.Text = info.EndTimeString;
+
+            //out of vid warnings
+            if (info.IsStartOutOfVideo)
+                SetOutOfVidWarning(txtBoxStartTime);
+
+            if (info.IsEndOutOfVideo)
+                SetOutOfVidWarning(txtBoxEndTime);
+
+            //unreliable time warnings
+            if (!info.Run.IsUtcStartReliable)
+                SetUnreliableTimeWarning(txtBoxStartTime, picStartTime);
+
+            if (!info.Run.IsUtcEndReliable)
+                SetUnreliableTimeWarning(txtBoxEndTime, picEndTime);
+
+            //disable auto-create if there are any warnings
+            if (info.IsOutOfVideo || !info.Run.IsUtcStartReliable || !info.Run.IsUtcEndReliable)
+                chkAutomateHighlight.Enabled = chkAutomateHighlight.Checked = false;
+        }
+
+        void SetOutOfVidWarning(TextBox timestampBox)
+        {
+            var outOfVidTooltip = "The recording is still being processed according to Twitch's API.\n"
+                + "This time might be out of the video's range until the recording is complete.";
+
+            timestampBox.ForeColor = System.Drawing.Color.Red;
+            tooltipOutOfVid.SetToolTip(timestampBox, outOfVidTooltip);
+        }
+
+        void SetUnreliableTimeWarning(TextBox timestampBox, PictureBox warningPic)
+        {
+            var unreliableTooltip = "This time could be incorrect. Checking it is highly recommended.\n"
+                + "This is due to a failure to synchronize with the internet clock during the run.";
+
+            timestampBox.BackColor = System.Drawing.Color.PaleGoldenrod;
+            warningPic.Image = Properties.Resources.warning;
+            toolTipUnreliableTime.SetToolTip(warningPic, unreliableTooltip);
+        }
+
+        void ResetTlpVideo()
+        {
+            txtBoxStartTime.Text = txtBoxEndTime.Text = String.Empty;
+            txtBoxEndTime.ForeColor = txtBoxStartTime.ForeColor = System.Drawing.SystemColors.WindowText;
+            txtBoxEndTime.BackColor = txtBoxStartTime.BackColor = System.Drawing.SystemColors.Control;
+            tooltipOutOfVid.SetToolTip(txtBoxStartTime, "");
+            tooltipOutOfVid.SetToolTip(txtBoxEndTime, "");
+            toolTipUnreliableTime.SetToolTip(txtBoxStartTime, "");
+            toolTipUnreliableTime.SetToolTip(txtBoxEndTime, "");
+            picStartTime.Image = picEndTime.Image = null;
+            chkAutomateHighlight.Enabled = true;
+            chkAutomateHighlight.Checked = false;
+            tlpVideo.Enabled = false;
+        }
+
         private void SearchCurrentlySelected()
         {
             if (_runs == null || _runs.Count <= 0)
@@ -229,10 +238,10 @@ namespace LiveSplit.RunHighlighter
 
             var timeSinceLastSearch = _lastSearchTimestamp != null
                 ? TimeSpan.FromMilliseconds(Environment.TickCount - (double)_lastSearchTimestamp)
-                : TimeSpan.FromHours(42) ;
+                : TimeSpan.FromHours(42);
 
             if (timeSinceLastSearch > TimeSpan.FromSeconds(0.1) && lstRunHistory.SelectedIndex >= 0 && _lastRunSearched != lstRunHistory.SelectedIndex)
-               ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
+                ProcessHighlight(_runs[lstRunHistory.SelectedIndex]);
         }
 
         private void btnHighlight_Click(object sender, EventArgs e)
@@ -241,8 +250,7 @@ namespace LiveSplit.RunHighlighter
 
             if (automated)
             {
-                var result = MessageBox.Show(this, "This will automatically create the highlight.\nDo you still want to do this?", "Confirm automatic highlighting", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-                if (result == DialogResult.No)
+                if (DialogResult.No == MessageBox.Show(this, "This will automatically create the highlight.\nDo you still want to do this?", "Confirm automatic highlighting", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
                     return;
             }
 
