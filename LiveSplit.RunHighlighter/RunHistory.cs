@@ -7,15 +7,30 @@ namespace LiveSplit.RunHighlighter
 {
     public static class RunHistory
     {
-        public class Run
+        public struct Run
         {
-            public DateTime UtcStart { get; set; }
-            public DateTime UtcEnd { get; set; }
-            public bool IsUtcStartReliable { get; set; }
-            public bool IsUtcEndReliable { get; set; }
-            public Time Time { get; set; }
-            public string Game { get; set; }
-            public string Category { get; set; }
+            public Attempt Attempt { get; }
+            public DateTime UtcStart => Attempt.Started.Value.Time.ToUniversalTime();
+            public DateTime UtcEnd => Attempt.Ended.Value.Time.ToUniversalTime();
+            public bool IsUtcStartReliable => Attempt.Started.Value.SyncedWithAtomicClock;
+            public bool IsUtcEndReliable => Attempt.Ended.Value.SyncedWithAtomicClock;
+            public Time Time => Attempt.Time;
+            public string Game { get; }
+            public string Category { get; }
+
+            public Run(Attempt attempt, string game, string category)
+            {
+                Attempt = attempt;
+                Game = game;
+                Category = category;
+            }
+
+            public Run(Attempt attempt, IRun splits)
+            {
+                Attempt = attempt;
+                Game = splits.GameName;
+                Category = splits.CategoryName;
+            }
 
             public string TimeString
             {
@@ -67,21 +82,8 @@ namespace LiveSplit.RunHighlighter
 
                 return number + " " + numberName + plural + " ago";
             }
-            public string TimeElapsedString => TimeElapsedStringSince(DateTime.UtcNow);
 
-            public static Run AttemptToRun(Attempt attempt, IRun splits)
-            {
-                return new Run
-                {
-                    UtcStart = attempt.Started.Value.Time.ToUniversalTime(),
-                    UtcEnd = attempt.Ended.Value.Time.ToUniversalTime(),
-                    IsUtcStartReliable = attempt.Started.Value.SyncedWithAtomicClock,
-                    IsUtcEndReliable = attempt.Ended.Value.SyncedWithAtomicClock,
-                    Time = attempt.Time,
-                    Game = splits.GameName,
-                    Category = splits.CategoryName
-                };
-            }
+            public string TimeElapsedString => TimeElapsedStringSince(DateTime.UtcNow);
         }
 
         public static IList<Run> GetRunHistory(IRun splits, int maxCount = -1, bool hideUnreliable = false)
@@ -98,7 +100,7 @@ namespace LiveSplit.RunHighlighter
                 if (maxCount != -1 && history.Count >= maxCount)
                     break;
 
-                history.Add(Run.AttemptToRun(attemptHistory[i], splits));
+                history.Add(new Run(attemptHistory[i], splits));
             }
 
             return history;

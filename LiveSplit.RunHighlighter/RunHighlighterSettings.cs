@@ -81,19 +81,12 @@ namespace LiveSplit.RunHighlighter
 
         private void btnPreview_Click(object sender, EventArgs e)
         {
-            var hl = new HighlightInfo(
-                null,
-                new RunHistory.Run
-                {
-                    UtcStart = DateTime.UtcNow,
-                    IsUtcStartReliable = true,
-                    UtcEnd = DateTime.UtcNow + TimeSpan.FromMinutes(16.5),
-                    IsUtcEndReliable = true,
-                    Time = new Model.Time(TimeSpan.Parse("0:33:43.4"), TimeSpan.Parse("0:33:24.72")),
-                    Game = "Half-Life",
-                    Category = "Any%"
-                },
-                this);
+            var time = new Model.Time(TimeSpan.Parse("0:33:43.4"), TimeSpan.Parse("0:33:24.72"));
+            var start = new Model.AtomicDateTime(DateTime.UtcNow, true);
+            var end = new Model.AtomicDateTime(DateTime.UtcNow + TimeSpan.FromMinutes(16.5), true);
+            var attempt = new Model.Attempt(0, time, start, end);
+
+            var hl = new HighlightInfo(null, new RunHistory.Run(attempt, "Half-Life", "Any%"), this);
             MessageBox.Show(this, String.Format("Title:\n{0}\n\nDescription:\n{1}", hl.Title, hl.Description), "Preview for a 33:24.72/33:43.4 run");
         }
 
