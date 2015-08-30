@@ -1,4 +1,18 @@
 <updates>
+    <update version="1.0">
+        <files>
+            <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
+        </files>
+        <changelog>
+            <change>
+                Run History is now pulled from the splits. Keeping Run Highlighter in the layout during runs is no longer required.
+                Run History from previous Run Highlighter versions isn't usable.
+            </change>
+            <change>
+                Added a setting to hide runs recorded without internet clock sync.
+            </change>
+        </changelog>
+    </update>
     <update version="0.6.1">
         <files>
             <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
