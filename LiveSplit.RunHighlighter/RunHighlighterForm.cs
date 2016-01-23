@@ -142,10 +142,6 @@ namespace LiveSplit.RunHighlighter
 
             if (!info.Run.IsUtcEndReliable)
                 SetUnreliableTimeWarning(txtBoxEndTime, picEndTime);
-
-            //disable auto-create if there are any warnings
-            if (info.IsOutOfVideo || !info.Run.IsUtcStartReliable || !info.Run.IsUtcEndReliable)
-                chkAutomateHighlight.Enabled = chkAutomateHighlight.Checked = false;
         }
 
         void SetOutOfVidWarning(TextBox timestampBox)
@@ -177,8 +173,6 @@ namespace LiveSplit.RunHighlighter
             toolTipUnreliableTime.SetToolTip(txtBoxStartTime, "");
             toolTipUnreliableTime.SetToolTip(txtBoxEndTime, "");
             picStartTime.Image = picEndTime.Image = null;
-            chkAutomateHighlight.Enabled = true;
-            chkAutomateHighlight.Checked = false;
             tlpVideo.Enabled = false;
         }
 
@@ -193,16 +187,8 @@ namespace LiveSplit.RunHighlighter
 
         private void btnHighlight_Click(object sender, EventArgs e)
         {
-            var automated = chkAutomateHighlight.Checked;
-
-            if (automated)
-            {
-                if (DialogResult.No == MessageBox.Show(this, "This will automatically create the highlight.\nDo you still want to do this?", "Confirm automatic highlighting", MessageBoxButtons.YesNo, MessageBoxIcon.Question))
-                    return;
-            }
-
             btnHighlight.Enabled = lstRunHistory.Enabled = false;
-            _vidManager = new VideoManager(_settings, _highlightInfo, automated);
+            _vidManager = new VideoManager(_settings, _highlightInfo);
 
             var uiThread = SynchronizationContext.Current;
             EventHandler onDisposed = (s, arg) => uiThread.Post(d =>
