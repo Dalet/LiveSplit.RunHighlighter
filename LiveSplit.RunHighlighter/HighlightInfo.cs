@@ -19,7 +19,8 @@ namespace LiveSplit.RunHighlighter
         public bool IsOutOfVideo => IsStartOutOfVideo || IsEndOutOfVideo;
         public string Title => FormatText(RawTitle);
         public string Description => FormatText(RawDescription);
-        public string ManagerURL => String.Format("twitch.tv/{0}/manager/{1}/highlight", Video.channel.name, Video._id);
+        public string ManagerURL => String.Format("twitch.tv/{0}/manager/{1}/highlight?start_time={2}&end_time={3}",
+				Video.channel.name, Video._id, (int)StartTime.TotalSeconds, (int)EndTime.TotalSeconds);
         public Uri ManagerURI => new Uri("http://" + ManagerURL);
         public string StartTimeString => HighlightTimeString(StartTime);
         public string EndTimeString => HighlightTimeString(EndTime);

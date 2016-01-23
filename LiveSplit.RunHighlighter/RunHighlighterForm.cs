@@ -1,6 +1,7 @@
 ﻿using LiveSplit.Model;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -124,7 +125,7 @@ namespace LiveSplit.RunHighlighter
 
         void UpdateVideoGroupBox(HighlightInfo info)
         {
-            txtBoxVidUrl.Text = info.Video.url;
+				txtBoxVidUrl.Text = info.ManagerURI.AbsoluteUri;
             tlpVideo.Enabled = true;
             txtBoxStartTime.Text = info.StartTimeString;
             txtBoxEndTime.Text = info.EndTimeString;
@@ -237,5 +238,10 @@ namespace LiveSplit.RunHighlighter
         {
             _lastRunSearched = -1;
         }
-    }
+
+		  private void btnOpenURL_Click(object sender, EventArgs e)
+		  {
+				Process.Start(txtBoxVidUrl.Text);
+		  }
+	 }
 }
