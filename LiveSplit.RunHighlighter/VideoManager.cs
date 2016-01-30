@@ -66,13 +66,15 @@ namespace LiveSplit.RunHighlighter
         {
             var url = new Uri((string)urlObj);
 
-            if ((url.Host != "twitch.tv" && url.Host != "www.twitch.tv") || url.LocalPath != this.HighlightInfo.ManagerURI.LocalPath)
+            if ((url.Host != "twitch.tv" && url.Host != "www.twitch.tv"))
                 return;
 
             if (_IE.ReadyState != tagREADYSTATE.READYSTATE_INTERACTIVE && _IE.ReadyState != tagREADYSTATE.READYSTATE_COMPLETE)
                 return;
 
-            var js = Properties.Resources.waitForKeyElements + "\n" + GetInjectionCode();
+            var js = Properties.Resources.waitForKeyElements + "\n"
+					 + Properties.Resources.run_highlighter_obj + "\n"
+					 + GetInjectionCode();
             ExecuteJavascript(js);
             Debug.WriteLine("JavaScript injected.");
         }
@@ -90,7 +92,7 @@ namespace LiveSplit.RunHighlighter
                 { "{duration}", HighlightInfo.HighlightTimeString(HighlightInfo.EndTime - HighlightInfo.StartTime) },
                 { "{title}", HighlightInfo.Title },
                 { "{description}", GetDescription() },
-                { "{tag_list}", "speedrun" },
+                { "{tag_list}", "speedrun, speedrunning" },
                 { "{lang}", "en" },
                 { "{out_of_vid}", HighlightInfo.IsOutOfVideo ? "true" : "false" }
             };
@@ -122,7 +124,7 @@ namespace LiveSplit.RunHighlighter
             if (Automated)
                 return HighlightInfo.Description + newlines + "Automatically highlighted by Run Highlighter\nhttps://github.com/Dalet/LiveSplit.RunHighlighter/releases";
             else
-                return HighlightInfo.Description + newlines + "Highlighted with Run Highlighter.\nhttps://github.com/Dalet/LiveSplit.RunHighlighter/releases";
+                return HighlightInfo.Description;
         }
 
         void ExecuteJavascript(string code)

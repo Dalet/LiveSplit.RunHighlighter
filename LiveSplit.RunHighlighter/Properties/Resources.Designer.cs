@@ -106,6 +106,33 @@ namespace LiveSplit.RunHighlighter.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to jQuery.fn.reverse = function() {
+        ///    return this.pushStack(this.get().reverse(), arguments);
+        ///};
+        ///
+        ///console.log(&quot;Run Highlighter: code injected&quot;);
+        ///
+        ///var RunHighlighter = RunHighlighter || {
+        ///	settings: {
+        ///		buffer: 6
+        ///	},
+        ///	_xhr: new XMLHttpRequest(),
+        ///
+        ///	highlight: function() {
+        ///		var urlVars = this._getUrlVars();
+        ///		this.start_time = parseInt(urlVars[&quot;start_time&quot;]);
+        ///		this.end_time = parseInt(urlVars[&quot;end_time&quot;]);
+        ///		this.automate = parseInt(urlVars[&quot;automate&quot;]) === 1;
+        ///
+        ///		if (!isNaN(this.start_time) || !isNaN(this.end [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string run_highlighter_obj {
+            get {
+                return ResourceManager.GetString("run_highlighter_obj", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to /*--- waitForKeyElements():  A utility function, for Greasemonkey scripts,
         ///    that detects and handles AJAXed content.
         ///
