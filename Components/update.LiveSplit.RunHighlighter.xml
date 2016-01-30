@@ -1,4 +1,25 @@
 <updates>
+    <update version="1.0.1">
+        <files>
+            <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
+        </files>
+        <changelog>
+				<change>
+					 Development focus has switched to a browser extension. The extension can also highlight segments.
+					 Get it here: https://github.com/Dalet/run-highlighter/releases/latest
+				</change>
+				<change>
+					 Added a button to open the highlight page in the default browser.
+					 If you have the extension installed you can click that instead of "Open Highlighter".
+				</change>
+            <change>
+                Rewritten the highlighter injection to be more reliable.
+            </change>
+            <change>
+                Removed auto-create option.
+            </change>
+        </changelog>
+    </update>
     <update version="1.0">
         <files>
             <file path="Components/LiveSplit.RunHighlighter.dll" status="changed"/>
