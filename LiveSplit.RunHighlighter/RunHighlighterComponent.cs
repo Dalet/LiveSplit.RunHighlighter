@@ -24,7 +24,13 @@ namespace LiveSplit.RunHighlighter
 
             this.ContextMenuControls.Add("Run Highlighter...", new Action(() =>
             {
-                if (_state.CurrentPhase == TimerPhase.Ended)
+				MessageBox.Show(_state.Form, "This component is now obsolete and has been replaced by this website:\nhttps://dalet.github.io/run-highlighter/"
+					+ "\n\nThe website has new features such as individual segment highlighting and multi-part detection."
+					+ "\n\nThe URL will be opened after you close this message.", "Run Highlighter",
+					MessageBoxButtons.OK, MessageBoxIcon.Information);
+				System.Diagnostics.Process.Start("https://dalet.github.io/run-highlighter/");
+
+				/*if (_state.CurrentPhase == TimerPhase.Ended)
                 {
                     MessageBox.Show(_state.Form, "The timer needs to be resetted in order to update the Attempt History.", "Run Highlighter");
                     return;
@@ -36,8 +42,8 @@ namespace LiveSplit.RunHighlighter
                 using (var form = new RunHighlighterForm(state.Run, Settings))
                     form.ShowDialog(state.Form);
 
-                _state.Form.TopMost = originalTopMost;
-            }));
+                _state.Form.TopMost = originalTopMost;*/
+			}));
         }
         public override XmlNode GetSettings(XmlDocument document) => Settings.GetSettings(document);
 
